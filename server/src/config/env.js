@@ -54,7 +54,7 @@ export const env = {
   ai: {
     provider: (process.env.AI_PROVIDER || '').toLowerCase(),
     anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
-    anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
+    anthropicModel: process.env.ANTHROPIC_MODEL || 'claude-opus-5',
   },
 };
 
