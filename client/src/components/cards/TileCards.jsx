@@ -1,76 +1,58 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-  Waves, Droplets, Mountain, Trees, Bird, Sailboat, Landmark, Building2, Tent, Camera, Users, Sparkles, Binoculars, House,
-  Footprints, Leaf, TreePine, Feather, Zap, Utensils, Heart, ShoppingBag, CloudRain, Sunrise, Drum, MapPin,
-} from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import SceneArt, { sceneFor } from '../ui/SceneArt';
 import { districtName, cx } from '../../utils/format';
 
-const CATEGORY_ICONS = {
-  beaches: Waves, waterfalls: Droplets, 'hill-stations': Mountain, forests: Trees, wildlife: Bird, backwaters: Sailboat,
-  heritage: Landmark, museums: Building2, adventure: Tent, photography: Camera, family: Users, religious: Sparkles,
-  viewpoints: Binoculars, 'lakes-dams': Waves, villages: House, treks: Footprints, 'nature-walks': Leaf, parks: TreePine,
-};
-const MOOD_ICONS = {
-  peaceful: Feather, adventure: Zap, family: Users, photography: Camera, food: Utensils, romantic: Heart,
-  shopping: ShoppingBag, 'rainy-day': CloudRain, 'sunrise-sunset': Sunrise, 'local-culture': Drum,
-};
+/** Home "explore by category" shortcuts (label key → destination). */
+export const HOME_CATEGORIES = [
+  { key: 'beaches', to: '/explore?category=beaches', scene: 'beach' },
+  { key: 'waterfalls', to: '/explore?category=waterfalls', scene: 'waterfall' },
+  { key: 'mountains', to: '/explore?category=hill-stations,viewpoints,treks', scene: 'hills' },
+  { key: 'nature', to: '/explore?category=forests,wildlife,nature-walks,backwaters', scene: 'forest' },
+  { key: 'heritage', to: '/explore?category=heritage,museums,religious', scene: 'heritage' },
+  { key: 'food', to: '/food', scene: 'food' },
+  { key: 'adventure', to: '/explore?category=adventure,treks', scene: 'backwater' },
+];
 
-function Icon({ name: C = MapPin, className }) {
-  return <C className={className} aria-hidden />;
-}
-
-export function CategoryTile({ slug, to }) {
+export function CategoryTile({ item }) {
   const { t } = useTranslation();
   return (
-    <Link to={to || `/explore?category=${slug}`} className="group relative flex h-28 overflow-hidden rounded-2xl ring-1 ring-sand-300/60 transition hover:shadow-[var(--shadow-lift)] sm:h-32">
-      <SceneArt scene={sceneFor([slug])} seed={slug} className="absolute inset-0 h-full w-full transition duration-500 group-hover:scale-105" />
-      <div className="absolute inset-0 bg-gradient-to-t from-forest-950/75 via-forest-950/20 to-transparent" />
-      <div className="relative mt-auto flex items-center gap-2 p-3 text-white">
-        <Icon name={CATEGORY_ICONS[slug]} className="size-4" />
-        <span className="text-sm font-semibold">{t(`categories.${slug}`)}</span>
+    <Link to={item.to} className="group w-28 shrink-0 snap-start text-center sm:w-auto">
+      <div className="aspect-square overflow-hidden rounded-[var(--radius-card)] bg-sand-200">
+        <SceneArt scene={item.scene} seed={item.key} className="img-zoom h-full w-full" />
       </div>
+      <p className="mt-2.5 text-sm font-medium text-ink group-hover:text-forest-700">{t(`categoriesHome.${item.key}`)}</p>
     </Link>
   );
 }
 
-export function MoodChip({ mood }) {
-  const { t } = useTranslation();
-  return (
-    <Link to={`/explore?mood=${mood}`} className="chip py-2.5">
-      <Icon name={MOOD_ICONS[mood]} className="size-4 text-forest-600" />
-      {t(`moods.${mood}`)}
-    </Link>
-  );
-}
+const DISTRICT_SCENE = {
+  thiruvananthapuram: 'beach', kollam: 'backwater', pathanamthitta: 'forest', alappuzha: 'backwater', kottayam: 'backwater',
+  idukki: 'hills', ernakulam: 'heritage', thrissur: 'waterfall', palakkad: 'hills', malappuram: 'forest',
+  kozhikode: 'beach', wayanad: 'hills', kannur: 'beach', kasaragod: 'heritage',
+};
 
+/** Compact district entry: small image, name, one-line tagline. */
 export function DistrictTile({ district, className }) {
   const { t, i18n } = useTranslation();
-  const scene = ['alappuzha', 'kottayam', 'kollam'].includes(district.slug)
-    ? 'backwater'
-    : ['idukki', 'wayanad', 'pathanamthitta', 'palakkad'].includes(district.slug)
-      ? 'hills'
-      : ['thiruvananthapuram', 'kozhikode', 'kannur'].includes(district.slug)
-        ? 'beach'
-        : ['thrissur'].includes(district.slug)
-          ? 'waterfall'
-          : 'heritage';
+  const tagline = i18n.language === 'ml' && district.taglineMl ? district.taglineMl : district.tagline;
   return (
-    <Link to={`/districts/${district.slug}`} className={cx('group relative flex aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-sand-300/60 transition hover:shadow-[var(--shadow-lift)]', className)}>
-      {district.heroImage?.url ? (
-        <img src={district.heroImage.url} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
-      ) : (
-        <SceneArt scene={scene} seed={district.slug} className="absolute inset-0 h-full w-full transition duration-500 group-hover:scale-105" />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-forest-950/85 via-forest-950/10 to-transparent" />
-      <div className="relative mt-auto p-3.5 text-white">
-        <p className="font-display text-lg leading-tight">{districtName(district.slug, i18n.language)}</p>
-        {district.tagline && <p className="mt-0.5 line-clamp-1 text-xs text-white/80">{i18n.language === 'ml' && district.taglineMl ? district.taglineMl : district.tagline}</p>}
-        {district.placeCount != null && <p className="mt-1 text-[11px] font-medium text-turmeric-100">{t('districts.places', { count: district.placeCount })}</p>}
+    <Link to={`/districts/${district.slug}`} className={cx('group flex items-center gap-3.5 rounded-[var(--radius-card)] p-2 -m-2 transition-colors hover:bg-white', className)}>
+      <div className="size-16 shrink-0 overflow-hidden rounded-xl bg-sand-200">
+        {district.heroImage?.url ? (
+          <img src={district.heroImage.url} alt="" loading="lazy" className="img-zoom h-full w-full object-cover" />
+        ) : (
+          <SceneArt scene={DISTRICT_SCENE[district.slug] || 'hills'} seed={district.slug} className="img-zoom h-full w-full" />
+        )}
       </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[15px] font-semibold text-ink">{districtName(district.slug, i18n.language)}</p>
+        <p className="truncate text-[13px] text-muted">{tagline || (district.placeCount != null && t('districts.places', { count: district.placeCount }))}</p>
+      </div>
+      <ArrowUpRight className="size-4 shrink-0 text-muted opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
     </Link>
   );
 }
 
-export { CATEGORY_ICONS, MOOD_ICONS };
+export { sceneFor, DISTRICT_SCENE };

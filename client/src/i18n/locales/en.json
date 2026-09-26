@@ -27,12 +27,32 @@
     "more": "More",
     "menu": "Menu",
     "emergency": "Emergency",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "sectionExplore": "Explore",
+    "sectionTravel": "Travel",
+    "sectionMore": "Discover more",
+    "sectionPersonal": "Personal",
+    "sectionHelp": "Help",
+    "discover": "Discover Kerala",
+    "trending": "Trending",
+    "directions": "Directions",
+    "routePlanner": "Route Planner",
+    "aiPlanner": "AI Trip Planner",
+    "savedPlaces": "Saved Places",
+    "savedTrips": "Saved Trips",
+    "myAccount": "My Account",
+    "emergencyAssistance": "Emergency Assistance",
+    "emergencyHint": "Helplines, hospitals and sharing your location",
+    "travelInfo": "Travel Information",
+    "about": "About Us",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "searchOpen": "Search"
   },
   "home": {
-    "heroTitle": "Discover Kerala Like a Local",
-    "heroSubtitle": "Explore hidden gems, local food, beautiful destinations, and unforgettable experiences across Kerala.",
-    "searchPlaceholder": "Try “peaceful beach near Kozhikode”",
+    "heroTitle": "Discover Kerala, Your Way.",
+    "heroSubtitle": "Find hidden places, explore local experiences, and plan your next adventure.",
+    "searchPlaceholder": "Try “hidden beaches near Kozhikode”",
     "explore": "Explore",
     "nearMe": "Near Me",
     "buildTrip": "Build My Trip with AI",
@@ -58,7 +78,28 @@
     "touristHelpSub": "Emergency numbers, nearby hospitals and pharmacies, and sharing your location with someone you trust.",
     "openHelp": "Open help & emergency",
     "viewAll": "View all",
-    "examples": "Try:"
+    "examples": "Try:",
+    "exploreCta": "Explore destinations",
+    "planCta": "Plan a trip",
+    "featuredEyebrow": "Featured",
+    "featuredTitle": "Places worth the journey",
+    "featuredSub": "A handful of Kerala’s most loved destinations.",
+    "categoryTitle": "What are you in the mood for?",
+    "gemsEyebrow": "Off the beaten path",
+    "gemsTitle": "Hidden gems",
+    "gemsSub": "Quieter corners, local favourites and places most visitors miss.",
+    "trendingTitle": "Trending this week",
+    "districtEyebrow": "By region",
+    "districtTitle": "Fourteen districts, fourteen moods",
+    "foodEyebrow": "Taste",
+    "foodTitle": "Food & local experiences",
+    "foodSub": "The dishes Kerala is known for — and where to try them.",
+    "eventsTitle": "Happening soon",
+    "planEyebrow": "Trip planner",
+    "planTitle": "A day, a weekend, or a week — planned in minutes.",
+    "planBody": "Tell us where you’re starting and what you enjoy. We’ll build an itinerary from real places, with honest notes on what we don’t know.",
+    "helpTitle": "Travelling in Kerala?",
+    "helpBody": "Emergency numbers, nearby hospitals and one-tap location sharing — always a tap away."
   },
   "common": {
     "viewDetails": "View details",
@@ -729,16 +770,37 @@
     "archived": "Archived"
   },
   "footer": {
-    "about": "A location-first companion for discovering Kerala — built on verified, attributable information.",
+    "about": "A calm, location-first guide to Kerala — built on information you can trust, with every unverified detail clearly marked.",
     "discover": "Discover",
     "plan": "Plan",
     "support": "Support",
     "dataNote": "Listings marked “Demo content” are sample data. Always confirm opening hours, prices and safety information locally.",
-    "rights": "Built for travellers and locals."
+    "rights": "Built for travellers and locals.",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "notFound": {
     "title": "Page not found",
     "body": "The page you were looking for doesn't exist or has moved.",
     "home": "Back to home"
+  },
+  "categoriesHome": {
+    "beaches": "Beaches",
+    "waterfalls": "Waterfalls",
+    "mountains": "Mountains",
+    "nature": "Nature",
+    "heritage": "Heritage",
+    "food": "Food",
+    "adventure": "Adventure"
+  },
+  "pages": {
+    "trendingTitle": "Trending in Kerala",
+    "trendingSub": "Ranked by recent views, saves, searches and editor picks — never by social-media hype.",
+    "travelInfoTitle": "Travel information",
+    "travelInfoSub": "Getting around Kerala: airports, railway stations, metro and bus hubs, plus practical notes.",
+    "aboutTitle": "About Keralam",
+    "privacyTitle": "Privacy",
+    "termsTitle": "Terms of use"
   }
 }

@@ -1,37 +1,47 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Logo from './Logo';
 import LanguageSwitcher from './LanguageSwitcher';
+
+const LINKS = [
+  ['/explore', 'discover'],
+  ['/districts', 'districts'],
+  ['/trip-builder', 'aiPlanner'],
+  ['/events', 'events'],
+  ['/help', 'emergencyAssistance'],
+  ['/about', 'about'],
+];
 
 export default function Footer() {
   const { t } = useTranslation();
-  const col = (title, links) => (
-    <div>
-      <h3 className="mb-3 font-sans text-sm font-semibold text-white">{title}</h3>
-      <ul className="space-y-2 text-sm">
-        {links.map(([to, key]) => (
-          <li key={to}>
-            <Link to={to} className="text-forest-100/80 hover:text-white">{t(`nav.${key}`)}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
   return (
-    <footer className="mt-16 bg-forest-900 pb-24 pt-12 text-forest-100 lg:pb-12">
-      <div className="container-page grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-        <div>
-          <p className="font-display text-2xl text-white">{t('brand.name')}</p>
-          <p className="mt-1 text-sm text-turmeric-100">{t('brand.tagline')}</p>
-          <p className="mt-4 max-w-sm text-sm text-forest-100/80">{t('footer.about')}</p>
-          <LanguageSwitcher className="mt-5 bg-forest-800 [&_button]:text-forest-100 [&_button[aria-pressed=true]]:text-forest-900" />
+    <footer className="bg-forest-950 text-white/75">
+      <div className="container-page py-14">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
+            <Logo light />
+            <p className="mt-4 text-sm leading-relaxed text-white/65">{t('footer.about')}</p>
+          </div>
+          <nav aria-label={t('footer.discover')}>
+            <ul className="grid grid-cols-2 gap-x-10 gap-y-2.5 text-sm">
+              {LINKS.map(([to, key]) => (
+                <li key={to}>
+                  <Link to={to} className="hover:text-white">{t(`nav.${key}`)}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        {col(t('footer.discover'), [['/explore', 'explore'], ['/districts', 'districts'], ['/hidden-gems', 'hiddenGems'], ['/food', 'food'], ['/events', 'events']])}
-        {col(t('footer.plan'), [['/trip-builder', 'aiTrip'], ['/directions', 'travel'], ['/stays', 'stays'], ['/near-me', 'nearMe'], ['/saved', 'saved']])}
-        {col(t('footer.support'), [['/help', 'help'], ['/shopping', 'shopping'], ['/theatres', 'theatres'], ['/activities', 'activities'], ['/account', 'account']])}
-      </div>
-      <div className="container-page mt-10 border-t border-forest-800 pt-6 text-xs text-forest-100/70">
-        <p>{t('footer.dataNote')}</p>
-        <p className="mt-2">© {new Date().getFullYear()} Keralam · {t('footer.rights')} Map data © OpenStreetMap contributors.</p>
+        <div className="mt-12 flex flex-col gap-5 border-t border-white/10 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <span>© {new Date().getFullYear()} {t('brand.name')}</span>
+            <Link to="/about#contact" className="hover:text-white">{t('footer.contact')}</Link>
+            <Link to="/privacy" className="hover:text-white">{t('footer.privacy')}</Link>
+            <Link to="/terms" className="hover:text-white">{t('footer.terms')}</Link>
+          </div>
+          <LanguageSwitcher dark />
+        </div>
+        <p className="mt-5 max-w-3xl text-[11px] leading-relaxed text-white/45">{t('footer.dataNote')} Map data © OpenStreetMap contributors.</p>
       </div>
     </footer>
   );

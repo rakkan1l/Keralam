@@ -70,9 +70,9 @@ export default function SearchBar({ size = 'lg', initial = '', autoFocus = false
           e.preventDefault();
           go(null);
         }}
-        className={cx('flex items-center rounded-full bg-white shadow-[var(--shadow-lift)] ring-1 ring-sand-300/70 focus-within:ring-2 focus-within:ring-forest-400', big ? 'h-14 pl-5 pr-1.5' : 'h-11 pl-4 pr-1')}
+        className={cx('flex items-center rounded-full border border-line bg-white shadow-[var(--shadow-soft)] transition focus-within:border-forest-400 focus-within:ring-3 focus-within:ring-forest-100', big ? 'h-14 pl-5 pr-1.5 sm:h-16 sm:pl-6 sm:pr-2' : 'h-12 pl-4 pr-1.5')}
       >
-        <Search className="size-5 shrink-0 text-forest-600" aria-hidden />
+        <Search className="size-5 shrink-0 text-muted" aria-hidden />
         <label htmlFor={`${listId}-input`} className="sr-only">{t('common.search')}</label>
         <input
           id={`${listId}-input`}
@@ -95,7 +95,7 @@ export default function SearchBar({ size = 'lg', initial = '', autoFocus = false
           aria-autocomplete="list"
           autoComplete="off"
         />
-        <button type="submit" className={cx('rounded-full bg-forest-800 font-medium text-white transition hover:bg-forest-700', big ? 'h-11 px-5 text-sm' : 'h-9 px-4 text-sm')}>
+        <button type="submit" className={cx('rounded-full bg-forest-800 font-medium text-white transition hover:bg-forest-900', big ? 'h-11 px-6 text-sm sm:h-12' : 'h-9 px-4 text-sm')}>
           {t('common.search')}
         </button>
       </form>
@@ -113,7 +113,7 @@ export default function SearchBar({ size = 'lg', initial = '', autoFocus = false
                 onClick={() => go(s)}
                 className={cx('flex cursor-pointer items-center gap-3 px-4 py-2.5 text-sm', active === i ? 'bg-forest-50' : 'hover:bg-sand-100')}
               >
-                <Icon className="size-4 text-forest-600" aria-hidden />
+                <Icon className="size-4 text-muted" aria-hidden />
                 <span className="flex-1 truncate font-medium text-ink">{s.type === 'district' ? districtName(s.slug, i18n.language) : s.label}</span>
                 {s.district && <span className="text-xs text-muted">{districtName(s.district, i18n.language)}</span>}
               </li>

@@ -1,207 +1,268 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MapPin, Star, CalendarDays, Ticket, IndianRupee, Clock, Utensils, BedDouble } from 'lucide-react';
+import { Star, ArrowRight, MapPin } from 'lucide-react';
 import SmartImage from '../ui/SmartImage';
 import SaveButton from '../SaveButton';
 import { TrustBadges } from '../ui/Badge';
-import Badge from '../ui/Badge';
-import { districtName, localized, formatDateRange, inr, cx } from '../../utils/format';
+import { districtName, localized, formatDate, cx } from '../../utils/format';
 
-function CardShell({ to, image, alt, categories, kind, seed, overlay, children, className = '' }) {
+/**
+ * Card family. Image-first and borderless: the photo carries the card, text sits
+ * below it. Variants:
+ *   standard — grid card (default)
+ *   feature  — tall image with overlaid text (editorial highlights)
+ *   compact  — horizontal row for dense lists
+ */
+
+function Media({ image, alt, categories, kind, seed, ratio = 'aspect-[4/3]', children, rounded = 'rounded-[var(--radius-card)]' }) {
   return (
-    <article className={cx('card group relative flex flex-col overflow-hidden transition duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]', className)}>
-      <div className="relative aspect-[4/3] overflow-hidden bg-sand-200">
-        <SmartImage image={image} alt={alt} categories={categories} kind={kind} seed={seed} className="transition duration-500 group-hover:scale-[1.03]" />
-        {overlay}
-      </div>
-      <div className="flex flex-1 flex-col p-4">{children}</div>
-      {/* Whole-card link; interactive children sit above it with relative z-index. */}
-      <Link to={to} className="absolute inset-0 z-0" aria-label={alt}>
-        <span className="sr-only">{alt}</span>
-      </Link>
-    </article>
+    <div className={cx('relative overflow-hidden bg-sand-200', ratio, rounded)}>
+      <SmartImage image={image} alt={alt} categories={categories} kind={kind} seed={seed} className="img-zoom" />
+      {children}
+    </div>
   );
 }
 
-function Meta({ icon: Icon, children }) {
+function Meta({ children }) {
+  return <p className="flex flex-wrap items-center gap-x-1.5 text-[13px] text-muted">{children}</p>;
+}
+const Dot = () => <span aria-hidden>·</span>;
+
+function Rating({ rating }) {
+  if (!rating?.count) return null;
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-muted">
-      <Icon className="size-3.5" aria-hidden />
-      {children}
+    <span className="inline-flex items-center gap-0.5 text-[13px] font-medium text-ink">
+      <Star className="size-3.5 fill-turmeric-400 text-turmeric-400" aria-hidden />
+      {rating.average.toFixed(1)}
     </span>
   );
 }
 
-export function PlaceCard({ place, className }) {
+function Overlays({ doc, type }) {
+  return (
+    <>
+      <div className="absolute top-3 left-3 z-10">
+        <TrustBadges doc={doc} compact onImage />
+      </div>
+      <SaveButton type={type} doc={doc} className="absolute top-3 right-3 z-10" />
+    </>
+  );
+}
+
+/** Generic compact row used by any entity. */
+function CompactRow({ to, title, meta, image, categories, kind, seed, doc, type }) {
+  return (
+    <article className="group relative flex min-w-0 items-center gap-4 py-3">
+      <div className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-sand-200">
+        <SmartImage image={image} alt={title} categories={categories} kind={kind} seed={seed} className="img-zoom" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate text-[15px] font-semibold">
+          <Link to={to} className="after:absolute after:inset-0">{title}</Link>
+        </h3>
+        <Meta>{meta}</Meta>
+      </div>
+      {doc && <SaveButton type={type} doc={doc} className="relative z-10 shrink-0 bg-sand-100 shadow-none" />}
+    </article>
+  );
+}
+
+export function PlaceCard({ place, variant = 'standard', showDescription = true, className }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
   const name = localized(place, 'name', lang);
-  const fee = place.entryFee || {};
-  return (
-    <CardShell
-      to={`/places/${place.slug}`}
-      image={place.images?.[0]}
-      alt={name}
-      categories={place.categories}
-      seed={place.name}
-      className={className}
-      overlay={
-        <>
-          <div className="absolute left-3 top-3 z-10">
-            <TrustBadges doc={place} compact onImage />
-          </div>
-          <SaveButton type="place" doc={place} className="absolute right-3 top-3 z-10" />
-        </>
-      }
-    >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-sans text-base font-semibold leading-snug text-forest-950">{name}</h3>
-        {place.rating?.count > 0 && (
-          <span className="inline-flex items-center gap-0.5 text-sm font-medium">
-            <Star className="size-4 fill-turmeric-400 text-turmeric-400" aria-hidden />
-            {place.rating.average.toFixed(1)}
+  const to = `/places/${place.slug}`;
+  const district = districtName(place.district, lang);
+  const category = place.categories?.[0] ? t(`categories.${place.categories[0]}`) : null;
+  const desc = localized(place, 'shortDescription', lang);
+
+  if (variant === 'compact') {
+    return (
+      <CompactRow
+        to={to}
+        title={name}
+        image={place.images?.[0]}
+        categories={place.categories}
+        seed={place.name}
+        doc={place}
+        type="place"
+        meta={<>{district}{category && <><Dot />{category}</>}{place.distanceKm != null && <><Dot />{t('common.kmAway', { km: place.distanceKm })}</>}</>}
+      />
+    );
+  }
+
+  if (variant === 'feature') {
+    return (
+      <article className={cx('group relative isolate overflow-hidden rounded-[var(--radius-panel)] bg-forest-900', className)}>
+        <div className="absolute inset-0 -z-10">
+          <SmartImage image={place.images?.[0]} alt={name} categories={place.categories} seed={place.name} className="img-zoom" />
+          <div className="absolute inset-0 bg-gradient-to-t from-forest-950/85 via-forest-950/25 to-transparent" />
+        </div>
+        <Overlays doc={place} type="place" />
+        <div className="flex h-full min-h-[22rem] flex-col justify-end p-5 text-white sm:p-7">
+          <p className="text-xs font-medium tracking-wide text-white/80 uppercase">{district}</p>
+          <h3 className="mt-1 font-display text-2xl leading-tight font-normal text-white sm:text-[1.75rem]">
+            <Link to={to} className="after:absolute after:inset-0">{name}</Link>
+          </h3>
+          {showDescription && desc && <p className="mt-2 line-clamp-2 max-w-md text-sm text-white/85">{desc}</p>}
+          <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium">
+            {t('common.viewDetails')} <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </span>
-        )}
-      </div>
-      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-        <Meta icon={MapPin}>{districtName(place.district, lang)}</Meta>
-        {place.distanceKm != null && <Meta icon={MapPin}>{t('common.kmAway', { km: place.distanceKm })}</Meta>}
-        {place.categories?.[0] && <span className="text-xs text-muted">· {t(`categories.${place.categories[0]}`)}</span>}
-      </div>
-      {place.shortDescription && <p className="mt-2 line-clamp-2 text-sm text-muted">{localized(place, 'shortDescription', lang)}</p>}
-      <div className="mt-auto flex items-center justify-between pt-3 text-xs">
-        <span className="text-forest-800">
-          {fee.isFree ? t('common.free') : typeof fee.amount === 'number' ? `${t('common.entryFee')}: ${inr(fee.amount)}` : ''}
-          {fee.isFree || typeof fee.amount === 'number' ? (fee.verified ? '' : ` (${t('common.estimated').toLowerCase()})`) : ''}
-        </span>
-        <span className="relative z-10 font-medium text-forest-700 group-hover:underline">{t('common.viewDetails')}</span>
-      </div>
-    </CardShell>
-  );
-}
+        </div>
+      </article>
+    );
+  }
 
-export function BusinessCard({ business, className }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
   return (
-    <CardShell
-      to={`/listings/${business.slug}`}
-      image={business.images?.[0]}
-      alt={localized(business, 'name', lang)}
-      kind={business.kind}
-      seed={business.name}
-      className={className}
-      overlay={
-        <>
-          <div className="absolute left-3 top-3 z-10"><TrustBadges doc={business} compact onImage /></div>
-          <SaveButton type="business" doc={business} className="absolute right-3 top-3 z-10" />
-        </>
-      }
-    >
-      <h3 className="font-sans text-base font-semibold leading-snug">{localized(business, 'name', lang)}</h3>
-      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-        <Meta icon={Utensils}>{t(`businessKinds.${business.kind}`)}</Meta>
-        <Meta icon={MapPin}>{districtName(business.district, lang)}</Meta>
-        {business.distanceKm != null && <Meta icon={MapPin}>{t('common.kmAway', { km: business.distanceKm })}</Meta>}
-      </div>
-      <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-        {business.priceRange && business.priceRange !== 'unknown' && <Badge tone="green" icon={IndianRupee}>{t(`price.${business.priceRange}`)}</Badge>}
-        {business.food?.categories?.slice(0, 2).map((c) => (
-          <Badge key={c}>{t(`foodCategories.${c}`)}</Badge>
-        ))}
-        {business.food?.lateNight && <Badge tone="blue" icon={Clock}>{t('foodCategories.late-night')}</Badge>}
-      </div>
-    </CardShell>
-  );
-}
-
-export function StayCard({ stay, className }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
-  return (
-    <CardShell
-      to={`/stays/${stay.slug}`}
-      image={stay.images?.[0]}
-      alt={localized(stay, 'name', lang)}
-      kind={stay.type}
-      seed={stay.name}
-      className={className}
-      overlay={
-        <>
-          <div className="absolute left-3 top-3 z-10"><TrustBadges doc={stay} compact onImage /></div>
-          <SaveButton type="stay" doc={stay} className="absolute right-3 top-3 z-10" />
-        </>
-      }
-    >
-      <h3 className="font-sans text-base font-semibold leading-snug">{localized(stay, 'name', lang)}</h3>
-      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-        <Meta icon={BedDouble}>{t(`stayTypes.${stay.type}`)}</Meta>
-        <Meta icon={MapPin}>{districtName(stay.district, lang)}</Meta>
-        {stay.distanceKm != null && <Meta icon={MapPin}>{t('common.kmAway', { km: stay.distanceKm })}</Meta>}
-      </div>
-      <p className="mt-auto pt-3 text-sm font-medium text-forest-800">
-        {stay.priceVerified && stay.priceFrom ? t('stays.priceFrom', { amount: stay.priceFrom.toLocaleString('en-IN') }) : t(`price.${stay.priceBand || 'unknown'}`)}
-      </p>
-    </CardShell>
-  );
-}
-
-export function EventCard({ event, className }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
-  return (
-    <CardShell
-      to={`/events/${event.slug}`}
-      image={event.images?.[0]}
-      alt={localized(event, 'title', lang)}
-      kind="event"
-      seed={event.title}
-      className={className}
-      overlay={
-        <>
-          <div className="absolute left-3 top-3 z-10"><TrustBadges doc={event} compact onImage /></div>
-          <SaveButton type="event" doc={event} className="absolute right-3 top-3 z-10" />
-          <span className="absolute bottom-3 left-3 z-10 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-forest-900">{t(`eventCategories.${event.category}`)}</span>
-        </>
-      }
-    >
-      <h3 className="font-sans text-base font-semibold leading-snug">{localized(event, 'title', lang)}</h3>
-      <div className="mt-1.5 flex flex-col gap-1">
-        <Meta icon={CalendarDays}>{formatDateRange(event.startDate, event.endDate, lang)}</Meta>
-        <Meta icon={MapPin}>
-          {event.venue ? `${event.venue}, ` : ''}
-          {districtName(event.district, lang)}
+    <article className={cx('group relative', className)}>
+      <Media image={place.images?.[0]} alt={name} categories={place.categories} seed={place.name}>
+        <Overlays doc={place} type="place" />
+      </Media>
+      <div className="mt-3">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="h3">
+            <Link to={to} className="after:absolute after:inset-0">{name}</Link>
+          </h3>
+          <Rating rating={place.rating} />
+        </div>
+        <Meta>
+          {district}
+          {category && <><Dot />{category}</>}
+          {place.distanceKm != null && <><Dot /><MapPin className="size-3" aria-hidden />{t('common.kmAway', { km: place.distanceKm })}</>}
         </Meta>
+        {showDescription && desc && <p className="mt-1.5 line-clamp-2 text-sm text-ink-soft">{desc}</p>}
       </div>
-      <div className="mt-auto pt-3">
-        <Badge tone={event.ticketStatus === 'free' ? 'green' : 'neutral'} icon={Ticket}>{t(`events.ticket.${event.ticketStatus || 'unknown'}`)}</Badge>
+    </article>
+  );
+}
+
+export function BusinessCard({ business, variant = 'standard', className }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const name = localized(business, 'name', lang);
+  const to = `/listings/${business.slug}`;
+  const meta = (
+    <>
+      {t(`businessKinds.${business.kind}`)}
+      <Dot />
+      {districtName(business.district, lang)}
+      {business.priceRange && business.priceRange !== 'unknown' && <><Dot />{t(`price.${business.priceRange}`)}</>}
+      {business.distanceKm != null && <><Dot />{t('common.kmAway', { km: business.distanceKm })}</>}
+    </>
+  );
+  if (variant === 'compact') return <CompactRow to={to} title={name} meta={meta} image={business.images?.[0]} kind={business.kind} seed={business.name} doc={business} type="business" />;
+  return (
+    <article className={cx('group relative', className)}>
+      <Media image={business.images?.[0]} alt={name} kind={business.kind} seed={business.name}>
+        <Overlays doc={business} type="business" />
+      </Media>
+      <div className="mt-3">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="h3"><Link to={to} className="after:absolute after:inset-0">{name}</Link></h3>
+          <Rating rating={business.rating} />
+        </div>
+        <Meta>{meta}</Meta>
       </div>
-    </CardShell>
+    </article>
+  );
+}
+
+export function StayCard({ stay, variant = 'standard', className }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const name = localized(stay, 'name', lang);
+  const to = `/stays/${stay.slug}`;
+  const price = stay.priceVerified && stay.priceFrom ? t('stays.priceFrom', { amount: stay.priceFrom.toLocaleString('en-IN') }) : stay.priceBand && stay.priceBand !== 'unknown' ? t(`price.${stay.priceBand}`) : null;
+  const meta = <>{t(`stayTypes.${stay.type}`)}<Dot />{districtName(stay.district, lang)}{stay.distanceKm != null && <><Dot />{t('common.kmAway', { km: stay.distanceKm })}</>}</>;
+  if (variant === 'compact') return <CompactRow to={to} title={name} meta={meta} image={stay.images?.[0]} kind={stay.type} seed={stay.name} doc={stay} type="stay" />;
+  return (
+    <article className={cx('group relative', className)}>
+      <Media image={stay.images?.[0]} alt={name} kind={stay.type} seed={stay.name} ratio="aspect-[3/2]">
+        <Overlays doc={stay} type="stay" />
+      </Media>
+      <div className="mt-3">
+        <h3 className="h3"><Link to={to} className="after:absolute after:inset-0">{name}</Link></h3>
+        <Meta>{meta}</Meta>
+        {price && <p className="mt-1 text-sm font-medium text-ink">{price}</p>}
+      </div>
+    </article>
+  );
+}
+
+function DateTile({ date, lang }) {
+  const d = new Date(date);
+  return (
+    <div className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-white py-1.5 text-center shadow-[var(--shadow-soft)]">
+      <span className="text-[10px] font-semibold tracking-wider text-laterite-600 uppercase">{formatDate(d, lang, { month: 'short' })}</span>
+      <span className="font-display text-xl leading-none text-ink">{formatDate(d, lang, { day: 'numeric' })}</span>
+    </div>
+  );
+}
+
+export function EventCard({ event, variant = 'standard', className }) {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
+  const title = localized(event, 'title', lang);
+  const to = `/events/${event.slug}`;
+  const when = formatDate(event.startDate, lang, { weekday: 'short', hour: 'numeric', minute: '2-digit' });
+  const where = `${event.venue ? `${event.venue}, ` : ''}${districtName(event.district, lang)}`;
+
+  if (variant === 'compact') {
+    return (
+      <article className="group relative flex min-w-0 items-center gap-4 py-3.5">
+        <DateTile date={event.startDate} lang={lang} />
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-[15px] font-semibold"><Link to={to} className="after:absolute after:inset-0">{title}</Link></h3>
+          <Meta>{when}<Dot />{where}</Meta>
+        </div>
+        <div className="hidden shrink-0 sm:block"><TrustBadges doc={event} compact /></div>
+      </article>
+    );
+  }
+  return (
+    <article className={cx('group relative', className)}>
+      <Media image={event.images?.[0]} alt={title} kind="event" seed={event.title} ratio="aspect-[16/10]">
+        <div className="absolute bottom-3 left-3 z-10"><DateTile date={event.startDate} lang={lang} /></div>
+        <Overlays doc={event} type="event" />
+      </Media>
+      <div className="mt-3">
+        <p className="eyebrow mb-1 text-muted">{t(`eventCategories.${event.category}`)}</p>
+        <h3 className="h3"><Link to={to} className="after:absolute after:inset-0">{title}</Link></h3>
+        <Meta>{when}<Dot />{where}</Meta>
+      </div>
+    </article>
   );
 }
 
 export function DishCard({ dish, className }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
+  const { i18n } = useTranslation();
+  const name = localized(dish, 'name', i18n.language);
   return (
-    <CardShell to={`/food/dishes/${dish.slug}`} image={dish.images?.[0]} alt={localized(dish, 'name', lang)} kind="dish" seed={dish.name} className={className} overlay={<SaveButton type="dish" doc={dish} className="absolute right-3 top-3 z-10" />}>
-      <h3 className="font-sans text-base font-semibold leading-snug">{localized(dish, 'name', lang)}</h3>
-      {lang !== 'ml' && dish.nameMl && <p className="text-sm text-muted">{dish.nameMl}</p>}
-      <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-        {dish.region && <Badge tone="blue">{dish.region}</Badge>}
-        {dish.dietary?.includes('vegetarian') && <Badge tone="green">{t('foodCategories.vegetarian')}</Badge>}
+    <article className={cx('group relative', className)}>
+      <Media image={dish.images?.[0]} alt={name} kind="dish" seed={dish.name} ratio="aspect-square">
+        <SaveButton type="dish" doc={dish} className="absolute top-3 right-3 z-10" />
+      </Media>
+      <div className="mt-3">
+        <h3 className="h3"><Link to={`/food/dishes/${dish.slug}`} className="after:absolute after:inset-0">{name}</Link></h3>
+        <Meta>
+          {dish.region}
+          {i18n.language !== 'ml' && dish.nameMl && <><Dot /><span lang="ml">{dish.nameMl}</span></>}
+        </Meta>
       </div>
-    </CardShell>
+    </article>
   );
 }
 
 /** Pick the right card for a {targetType, item} pair (saved lists, search). */
-export function AnyCard({ type, item }) {
+export function AnyCard({ type, item, variant }) {
   if (!item) return null;
-  if (type === 'place') return <PlaceCard place={item} />;
-  if (type === 'business') return <BusinessCard business={item} />;
-  if (type === 'stay') return <StayCard stay={item} />;
-  if (type === 'event') return <EventCard event={item} />;
+  if (type === 'place') return <PlaceCard place={item} variant={variant} />;
+  if (type === 'business') return <BusinessCard business={item} variant={variant} />;
+  if (type === 'stay') return <StayCard stay={item} variant={variant} />;
+  if (type === 'event') return <EventCard event={item} variant={variant} />;
   if (type === 'dish') return <DishCard dish={item} />;
   return null;
 }
+
+export const CARD_GRID = 'grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3';
+export const CARD_GRID_4 = 'grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-4';

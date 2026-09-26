@@ -2,67 +2,87 @@
 @import 'leaflet/dist/leaflet.css';
 
 /*
- * Design tokens — a restrained, nature-inspired palette:
- *   forest (deep green, primary), sand (natural off-white surfaces),
- *   laterite (terracotta accent for calls to action), turmeric (small highlights),
- *   lagoon (info/water accents). Contrast pairs used for text meet WCAG AA.
+ * Design system v2 — "editorial travel".
+ * One primary (deep forest), warm paper neutrals, charcoal ink and a single
+ * restrained accent (clay) reserved for emergency and rare emphasis. Status hues
+ * (turmeric, lagoon) appear only inside small status badges.
+ *
+ * Type scale (rem): display 3.5/2.5 · h1 2.25 · h2 1.625 · h3 1.125 · body 1 · small .875 · caption .75
+ * Spacing rhythm: 4px base; sections 64–96px; card gaps 20–24px.
+ * Radii: 10 (controls) · 14 (cards/images) · 22 (feature panels) · full (pills).
+ * Breakpoints: sm 640 · md 768 · lg 1024 · xl 1280.
  */
 @theme {
   --font-sans: 'Inter', 'Noto Sans Malayalam', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Fraunces', 'Noto Sans Malayalam', Georgia, serif;
 
-  --color-forest-50: #f0f6f2;
-  --color-forest-100: #dcebe1;
-  --color-forest-200: #b9d6c4;
-  --color-forest-300: #8dbba0;
-  --color-forest-400: #5c9a78;
-  --color-forest-500: #3c7d5b;
-  --color-forest-600: #2c6448;
-  --color-forest-700: #24503b;
-  --color-forest-800: #1c4532;
-  --color-forest-900: #143324;
-  --color-forest-950: #0b1f15;
+  --color-forest-50: #f1f5f2;
+  --color-forest-100: #e2ebe5;
+  --color-forest-200: #c3d6ca;
+  --color-forest-300: #98b8a4;
+  --color-forest-400: #6a957c;
+  --color-forest-500: #4a7862;
+  --color-forest-600: #3a634f;
+  --color-forest-700: #2f5241;
+  --color-forest-800: #264436;
+  --color-forest-900: #1e372b;
+  --color-forest-950: #13251c;
 
-  --color-sand-50: #fdfcf9;
-  --color-sand-100: #faf8f3;
-  --color-sand-200: #f2eee4;
-  --color-sand-300: #e6e0d1;
-  --color-sand-400: #cfc6b2;
+  /* Paper neutrals (kept under the "sand" name used across components) */
+  --color-sand-50: #fcfbf8;
+  --color-sand-100: #f7f5f0;
+  --color-sand-200: #efebe3;
+  --color-sand-300: #e3ded3;
+  --color-sand-400: #cbc4b5;
 
-  --color-laterite-50: #fbf1ec;
-  --color-laterite-100: #f5ddd0;
-  --color-laterite-500: #c0603a;
-  --color-laterite-600: #a44e2d;
-  --color-laterite-700: #843e24;
+  /* Accent: clay — SOS, destructive actions, rare emphasis only */
+  --color-laterite-50: #faf1ec;
+  --color-laterite-100: #f2dccf;
+  --color-laterite-500: #b4633d;
+  --color-laterite-600: #9c5231;
+  --color-laterite-700: #7f4127;
 
-  --color-turmeric-100: #fbf0d4;
-  --color-turmeric-400: #e8b04b;
-  --color-turmeric-600: #a87412;
+  /* Status-only hues */
+  --color-turmeric-100: #f8efd9;
+  --color-turmeric-400: #d9a441;
+  --color-turmeric-600: #8a6212;
+  --color-lagoon-50: #edf4f6;
+  --color-lagoon-500: #3b7486;
+  --color-lagoon-700: #245566;
 
-  --color-lagoon-50: #eef6f8;
-  --color-lagoon-500: #2f7f95;
-  --color-lagoon-700: #1f5a6b;
+  --color-ink: #1c1f1d;
+  --color-ink-soft: #3b403d;
+  --color-muted: #676e6a;
+  --color-line: #e5e1d8;
 
-  --color-ink: #1b2420;
-  --color-muted: #5b6660;
+  --radius-card: 14px;
+  --radius-panel: 22px;
+  --shadow-soft: 0 1px 2px rgb(19 37 28 / 0.04), 0 2px 8px rgb(19 37 28 / 0.04);
+  --shadow-lift: 0 10px 30px -10px rgb(19 37 28 / 0.25);
+  --shadow-overlay: 0 24px 60px -12px rgb(19 37 28 / 0.35);
 
-  --radius-card: 1.25rem;
-  --shadow-soft: 0 1px 2px rgb(20 51 36 / 0.04), 0 4px 16px rgb(20 51 36 / 0.06);
-  --shadow-lift: 0 2px 4px rgb(20 51 36 / 0.06), 0 12px 32px rgb(20 51 36 / 0.1);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
   }
   body {
-    @apply bg-sand-100 text-ink font-sans antialiased;
+    overflow-x: clip;
+    @apply bg-sand-100 font-sans text-[15px] leading-relaxed text-ink antialiased sm:text-base;
   }
   h1,
   h2,
-  h3 {
-    @apply font-display tracking-tight text-forest-950;
+  h3,
+  h4 {
+    @apply text-ink;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-forest-500;
@@ -74,34 +94,75 @@
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-8;
   }
+  /* Typography roles */
+  .display {
+    @apply font-display text-[2.5rem] leading-[1.02] font-normal tracking-[-0.02em] sm:text-[3.5rem] lg:text-[4.25rem];
+  }
+  .h1 {
+    @apply font-display text-[2rem] leading-[1.1] font-normal tracking-[-0.015em] sm:text-[2.5rem];
+  }
+  .h2 {
+    @apply font-display text-[1.5rem] leading-tight font-normal tracking-[-0.01em] sm:text-[1.75rem];
+  }
+  .h3 {
+    @apply text-[1.0625rem] leading-snug font-semibold tracking-[-0.005em];
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold tracking-[0.14em] text-forest-600 uppercase;
+  }
+  .caption {
+    @apply text-xs text-muted;
+  }
+  .lead {
+    @apply text-base leading-relaxed text-ink-soft sm:text-lg;
+  }
+
+  /* Surfaces */
   .card {
-    @apply rounded-[var(--radius-card)] bg-white shadow-[var(--shadow-soft)] ring-1 ring-sand-300/60;
+    @apply rounded-[var(--radius-card)] border border-line bg-white;
   }
+  .panel {
+    @apply rounded-[var(--radius-panel)] bg-white p-6 sm:p-8;
+  }
+  .divider {
+    @apply border-t border-line;
+  }
+
+  /* Controls */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-white px-3.5 py-1.5 text-sm font-medium text-forest-900 transition hover:border-forest-300 hover:bg-forest-50;
+    @apply inline-flex h-9 items-center gap-1.5 rounded-full border border-line bg-white px-3.5 text-sm font-medium whitespace-nowrap text-ink-soft transition-colors duration-200 hover:border-forest-300 hover:text-forest-800;
   }
   .chip-active {
-    @apply border-forest-700 bg-forest-800 text-white hover:bg-forest-700 hover:border-forest-700;
+    @apply border-forest-800 bg-forest-800 text-white hover:border-forest-800 hover:text-white;
   }
   .input {
-    @apply w-full rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 transition focus:border-forest-500 focus:outline-none focus:ring-2 focus:ring-forest-200;
+    @apply h-11 w-full rounded-[10px] border border-line bg-white px-3.5 text-[15px] text-ink transition-colors placeholder:text-muted/70 focus:border-forest-500 focus:ring-3 focus:ring-forest-100 focus:outline-none;
+  }
+  textarea.input {
+    @apply h-auto py-2.5;
   }
   .label {
-    @apply mb-1.5 block text-sm font-medium text-forest-950;
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .link {
+    @apply font-medium text-forest-700 underline-offset-4 hover:underline;
   }
   .scroll-row {
-    @apply -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0;
+    @apply -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-4 px-4 pb-2 sm:-mx-6 sm:scroll-px-6 sm:px-6;
     scrollbar-width: none;
   }
   .scroll-row::-webkit-scrollbar {
     display: none;
   }
+  .img-zoom {
+    @apply transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:scale-[1.04];
+  }
 }
 
 @utility pb-safe {
-  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  padding-bottom: max(env(safe-area-inset-bottom), 0.75rem);
 }
 
 @keyframes shimmer {
@@ -109,12 +170,26 @@
     transform: translateX(100%);
   }
 }
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.5s var(--ease-out-soft) both;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
@@ -123,4 +198,7 @@
 .leaflet-container {
   font-family: var(--font-sans);
   border-radius: inherit;
+}
+.leaflet-control-zoom a {
+  color: var(--color-ink) !important;
 }

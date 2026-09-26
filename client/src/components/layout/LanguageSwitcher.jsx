@@ -1,27 +1,30 @@
 import { useTranslation } from 'react-i18next';
-import { Languages } from 'lucide-react';
 import { LANGUAGES } from '../../i18n';
 import { cx } from '../../utils/format';
 
-/** Switching language re-renders in place — the current route, filters and trip state are kept. */
-export default function LanguageSwitcher({ className = '', compact = false }) {
-  const { i18n } = useTranslation();
-  const enabled = LANGUAGES.filter((l) => l.enabled);
+/** Segmented language control. Switching re-renders in place, keeping route, filters and trip state. */
+export default function LanguageSwitcher({ className = '', dark = false }) {
+  const { i18n, t } = useTranslation();
   return (
-    <div className={cx('inline-flex items-center gap-1 rounded-full bg-sand-200/70 p-1', className)} role="group" aria-label="Language">
-      {!compact && <Languages className="ml-1.5 size-4 text-forest-700" aria-hidden />}
-      {enabled.map((l) => (
-        <button
-          key={l.code}
-          type="button"
-          lang={l.code}
-          onClick={() => i18n.changeLanguage(l.code)}
-          aria-pressed={i18n.language === l.code}
-          className={cx('rounded-full px-2.5 py-1 text-xs font-semibold transition', i18n.language === l.code ? 'bg-white text-forest-900 shadow-sm' : 'text-forest-800 hover:bg-white/60')}
-        >
-          {l.code === 'en' ? 'EN' : 'മല'}
-        </button>
-      ))}
+    <div className={cx('inline-flex rounded-full p-0.5', dark ? 'bg-white/10' : 'bg-sand-200', className)} role="group" aria-label={t('account.language')}>
+      {LANGUAGES.filter((l) => l.enabled).map((l) => {
+        const active = i18n.language === l.code;
+        return (
+          <button
+            key={l.code}
+            type="button"
+            lang={l.code}
+            onClick={() => i18n.changeLanguage(l.code)}
+            aria-pressed={active}
+            className={cx(
+              'rounded-full px-3 py-1 text-xs font-medium transition',
+              active ? (dark ? 'bg-white text-ink' : 'bg-white text-ink shadow-sm') : dark ? 'text-white/75 hover:text-white' : 'text-muted hover:text-ink',
+            )}
+          >
+            {l.label}
+          </button>
+        );
+      })}
     </div>
   );
 }

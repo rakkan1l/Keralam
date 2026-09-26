@@ -1,79 +1,126 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Compass, LocateFixed, Sparkles, Siren, ArrowRight, Clock } from 'lucide-react';
+import { ArrowRight, Sparkles, Phone } from 'lucide-react';
 import HeroArt from '../components/HeroArt';
 import SearchBar from '../components/SearchBar';
 import Button from '../components/ui/Button';
 import Section from '../components/ui/Section';
+import Carousel from '../components/ui/Carousel';
 import Seo from '../components/Seo';
-import { PlaceCard, EventCard, BusinessCard, StayCard, DishCard } from '../components/cards/Cards';
-import { CategoryTile, DistrictTile, MoodChip } from '../components/cards/TileCards';
-import { CardSkeleton } from '../components/ui/Skeleton';
+import { PlaceCard, EventCard, DishCard, CARD_GRID_4 } from '../components/cards/Cards';
+import { CategoryTile, DistrictTile, HOME_CATEGORIES } from '../components/cards/TileCards';
+import { CardSkeleton, Skeleton } from '../components/ui/Skeleton';
 import { ErrorState, EmptyState } from '../components/ui/States';
+import { SEARCH_EXAMPLES } from '../components/layout/SearchOverlay';
 import { endpoints } from '../services/api';
-import { PLACE_CATEGORIES, MOODS, TIME_BUCKETS } from '../utils/constants';
-import { cx } from '../utils/format';
 
-const EXAMPLES = ['Peaceful beach near Kozhikode', 'Waterfall suitable for families', 'Places under 100 km from Malappuram', 'Cheap food near me', 'What can I do for four hours?'];
+// Optional hero photograph (e.g. a licensed image on your CDN). Falls back to illustrated art.
+const HERO_IMAGE = import.meta.env.VITE_HERO_IMAGE;
 
-/** Horizontal, snap-scrolling row on mobile; grid on desktop. */
-function Row({ query, render, empty, cols = 'lg:grid-cols-4' }) {
-  const { data, isLoading, error, refetch } = query;
-  const items = Array.isArray(data) ? data : data?.data;
-  if (error) return <ErrorState error={error} onRetry={refetch} />;
+function Hero() {
+  const { t } = useTranslation();
   return (
-    <div className={cx('scroll-row lg:grid lg:overflow-visible', cols)}>
-      {isLoading
-        ? Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} className="w-72 shrink-0 snap-start lg:w-auto" />)
-        : items?.length
-          ? items.map((item) => (
-              <div key={item._id} className="w-72 shrink-0 snap-start lg:w-auto">
-                {render(item)}
-              </div>
-            ))
-          : <div className="w-full lg:col-span-full">{empty || <EmptyState />}</div>}
-    </div>
+    <section className="relative isolate flex min-h-[640px] items-end overflow-hidden bg-forest-900 sm:min-h-[88vh]">
+      {HERO_IMAGE ? (
+        <img src={HERO_IMAGE} alt="" className="absolute inset-0 -z-10 h-full w-full object-cover" fetchPriority="high" />
+      ) : (
+        <HeroArt className="absolute inset-0 -z-10 h-full w-full" />
+      )}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-forest-950/80 via-forest-950/25 to-forest-950/30" />
+      <div className="container-page pt-28 pb-14 sm:pb-20">
+        <div className="animate-fade-up max-w-3xl">
+          <h1 className="display text-white">{t('home.heroTitle')}</h1>
+          <p className="mt-5 max-w-xl text-base text-white/85 sm:text-lg">{t('home.heroSubtitle')}</p>
+          <div className="mt-8 max-w-2xl">
+            <SearchBar />
+            <p className="mt-3 hidden flex-wrap gap-x-4 gap-y-1 text-[13px] text-white/75 sm:flex">
+              {SEARCH_EXAMPLES.map((q) => (
+                <Link key={q} to={`/search?q=${encodeURIComponent(q)}`} className="underline-offset-4 hover:text-white hover:underline">{q}</Link>
+              ))}
+            </p>
+          </div>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button to="/explore" variant="light" size="lg">{t('home.exploreCta')} <ArrowRight className="size-4" aria-hidden /></Button>
+            <Button to="/trip-builder" variant="glass" size="lg"><Sparkles className="size-4" aria-hidden /> {t('home.planCta')}</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Featured() {
+  const { t } = useTranslation();
+  const q = useQuery({ queryKey: ['places', 'featured-home'], queryFn: () => endpoints.places({ featured: 'true', limit: 3 }) });
+  const items = q.data?.data || [];
+  return (
+    <Section id="featured" eyebrow={t('home.featuredEyebrow')} title={t('home.featuredTitle')} subtitle={t('home.featuredSub')} to="/explore">
+      {q.error ? (
+        <ErrorState error={q.error} onRetry={q.refetch} />
+      ) : q.isLoading ? (
+        <div className="grid gap-5 lg:grid-cols-12"><Skeleton className="h-[30rem] rounded-[var(--radius-panel)] lg:col-span-7" /><Skeleton className="h-[30rem] rounded-[var(--radius-panel)] lg:col-span-5" /></div>
+      ) : (
+        <div className="grid gap-5 lg:grid-cols-12 lg:grid-rows-2">
+          {items[0] && <PlaceCard place={items[0]} variant="feature" className="lg:col-span-7 lg:row-span-2 lg:min-h-[34rem] [&>div:last-child]:lg:min-h-[34rem]" />}
+          {items.slice(1).map((p) => <PlaceCard key={p._id} place={p} variant="feature" showDescription={false} className="lg:col-span-5 [&>div:last-child]:min-h-[16rem]" />)}
+        </div>
+      )}
+    </Section>
+  );
+}
+
+function HiddenGems() {
+  const { t } = useTranslation();
+  const q = useQuery({ queryKey: ['places', 'gems-home'], queryFn: () => endpoints.places({ hiddenGem: 'true', limit: 8 }) });
+  return (
+    <section className="bg-forest-950 py-16 text-white sm:py-24" aria-labelledby="gems-title">
+      <div className="container-page">
+        <div className="mb-9 flex items-end justify-between gap-6">
+          <div className="max-w-xl">
+            <p className="eyebrow mb-2 text-forest-300">{t('home.gemsEyebrow')}</p>
+            <h2 id="gems-title" className="h2 text-white">{t('home.gemsTitle')}</h2>
+            <p className="mt-2 text-[15px] text-white/70">{t('home.gemsSub')}</p>
+          </div>
+          <Link to="/hidden-gems" className="hidden shrink-0 items-center gap-1.5 text-sm font-medium text-white/85 hover:text-white sm:inline-flex">
+            {t('home.viewAll')} <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+        {q.error ? (
+          <ErrorState error={q.error} onRetry={q.refetch} />
+        ) : (
+          <Carousel dark label={t('home.gemsTitle')} itemClass="w-[80%] sm:w-[44%] lg:w-[30%]">
+            {(q.data?.data || Array.from({ length: 3 }, (_, i) => ({ _id: `s${i}`, skeleton: true }))).map((p) =>
+              p.skeleton ? <Skeleton key={p._id} className="h-[26rem] rounded-[var(--radius-panel)] bg-white/10" /> : <PlaceCard key={p._id} place={p} variant="feature" className="[&>div:last-child]:min-h-[26rem]" />,
+            )}
+          </Carousel>
+        )}
+      </div>
+    </section>
   );
 }
 
 function Trending() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState('places');
-  const q = useQuery({ queryKey: ['trending', tab], queryFn: () => endpoints.trending({ type: tab, limit: 8 }) });
-  const tabs = [
-    ['places', t('home.trendingPlaces')],
-    ['cafes', t('home.trendingCafes')],
-    ['events', t('home.trendingEvents')],
-    ['seasonal', t('home.seasonal')],
-  ];
+  const q = useQuery({ queryKey: ['trending', 'places', 8], queryFn: () => endpoints.trending({ type: 'places', limit: 8 }) });
   return (
-    <Section id="trending" title={t('home.trendingNow')} subtitle={t('home.trendingSub')}>
-      <div className="mb-5 flex gap-2 overflow-x-auto" role="tablist">
-        {tabs.map(([key, label]) => (
-          <button key={key} role="tab" aria-selected={tab === key} type="button" onClick={() => setTab(key)} className={cx('chip shrink-0', tab === key && 'chip-active')}>
-            {label}
-          </button>
-        ))}
-      </div>
-      <Row
-        query={q}
-        render={(item) => (tab === 'events' ? <EventCard event={item} /> : tab === 'cafes' ? <BusinessCard business={item} /> : <PlaceCard place={item} />)}
-      />
+    <Section id="trending" title={t('home.trendingTitle')} subtitle={t('home.trendingSub')} to="/trending">
+      {q.error ? (
+        <ErrorState error={q.error} onRetry={q.refetch} />
+      ) : (
+        <Carousel label={t('home.trendingTitle')} itemClass="w-[72%] sm:w-[40%] lg:w-[23.5%]">
+          {(q.data || Array.from({ length: 4 }, (_, i) => ({ _id: `s${i}`, skeleton: true }))).map((p) => (p.skeleton ? <CardSkeleton key={p._id} /> : <PlaceCard key={p._id} place={p} showDescription={false} />))}
+        </Carousel>
+      )}
     </Section>
   );
 }
 
 export default function Home() {
   const { t } = useTranslation();
-  const gems = useQuery({ queryKey: ['places', 'gems-home'], queryFn: () => endpoints.places({ hiddenGem: 'true', limit: 8 }) });
-  const weekend = useQuery({ queryKey: ['places', 'weekend-home'], queryFn: () => endpoints.places({ time: 'weekend', limit: 4 }) });
   const districts = useQuery({ queryKey: ['districts'], queryFn: endpoints.districts });
   const dishes = useQuery({ queryKey: ['dishes', 'home'], queryFn: () => endpoints.dishes({ limit: 4 }) });
-  const eateries = useQuery({ queryKey: ['businesses', 'home-food'], queryFn: () => endpoints.businesses({ kind: 'restaurant,street-food', district: 'kozhikode,ernakulam', limit: 4 }) });
-  const events = useQuery({ queryKey: ['events', 'week-home'], queryFn: () => endpoints.events({ when: 'week', limit: 4 }) });
-  const stays = useQuery({ queryKey: ['stays', 'home'], queryFn: () => endpoints.stays({ limit: 4 }) });
+  const events = useQuery({ queryKey: ['events', 'upcoming-home'], queryFn: () => endpoints.events({ when: 'month', limit: 6 }) });
 
   return (
     <>
@@ -82,125 +129,74 @@ export default function Home() {
         description={t('home.heroSubtitle')}
         jsonLd={{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'Keralam', potentialAction: { '@type': 'SearchAction', target: '/search?q={query}', 'query-input': 'required name=query' } }}
       />
+      <Hero />
 
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden">
-        <HeroArt className="absolute inset-0 -z-10 h-full w-full" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest-950/10 via-transparent to-forest-950/45" />
-        <div className="container-page flex min-h-[560px] flex-col justify-center py-16 sm:min-h-[620px]">
-          <p className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-forest-800 backdrop-blur">
-            {t('brand.tagline')}
-          </p>
-          <h1 className="max-w-3xl text-4xl leading-[1.05] text-forest-950 sm:text-6xl">{t('home.heroTitle')}</h1>
-          <p className="mt-4 max-w-2xl text-base text-forest-900 sm:text-lg">{t('home.heroSubtitle')}</p>
-          <div className="mt-8 max-w-2xl">
-            <SearchBar />
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-medium text-forest-950">{t('home.examples')}</span>
-              {EXAMPLES.slice(0, 3).map((ex) => (
-                <Link key={ex} to={`/search?q=${encodeURIComponent(ex)}`} className="rounded-full bg-white/75 px-3 py-1 text-forest-900 backdrop-blur hover:bg-white">
-                  {ex}
-                </Link>
-              ))}
-            </div>
+      <div className="container-page">
+        <Featured />
+
+        <section className="pb-4" aria-labelledby="cat-title">
+          <h2 id="cat-title" className="h3 mb-5 text-lg">{t('home.categoryTitle')}</h2>
+          <div className="scroll-row gap-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 lg:grid-cols-7">
+            {HOME_CATEGORIES.map((c) => <CategoryTile key={c.key} item={c} />)}
           </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button to="/explore" size="lg">
-              <Compass className="size-5" aria-hidden /> {t('home.explore')}
-            </Button>
-            <Button to="/near-me" size="lg" variant="light">
-              <LocateFixed className="size-5" aria-hidden /> {t('home.nearMe')}
-            </Button>
-            <Button to="/trip-builder" size="lg" variant="accent">
-              <Sparkles className="size-5" aria-hidden /> {t('home.buildTrip')}
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
+
+      <div className="mt-12 sm:mt-16"><HiddenGems /></div>
 
       <div className="container-page">
         <Trending />
 
-        <Section id="gems" title={t('home.hiddenGems')} subtitle={t('home.hiddenGemsSub')} to="/hidden-gems">
-          <Row query={gems} render={(p) => <PlaceCard place={p} />} />
-        </Section>
-
-        <Section id="categories" title={t('home.byCategory')} to="/explore">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {PLACE_CATEGORIES.map((c) => (
-              <CategoryTile key={c} slug={c} />
-            ))}
-          </div>
-        </Section>
-
-        <Section id="districts" title={t('home.byDistrict')} subtitle={t('home.byDistrictSub')} to="/districts">
+        <Section id="districts" eyebrow={t('home.districtEyebrow')} title={t('home.districtTitle')} to="/districts">
           {districts.error ? (
             <ErrorState error={districts.error} onRetry={districts.refetch} />
           ) : (
-            <div className="scroll-row lg:grid lg:grid-cols-7 lg:overflow-visible">
-              {(districts.data || Array.from({ length: 14 }, (_, i) => ({ slug: `s${i}` }))).map((d) =>
-                districts.data ? <DistrictTile key={d.slug} district={d} className="w-40 shrink-0 snap-start lg:w-auto" /> : <CardSkeleton key={d.slug} className="w-40 shrink-0 lg:w-auto" />,
+            <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+              {(districts.data || Array.from({ length: 8 }, (_, i) => ({ slug: `s${i}`, skeleton: true }))).map((d) =>
+                d.skeleton ? <Skeleton key={d.slug} className="h-16" /> : <DistrictTile key={d.slug} district={d} />,
               )}
             </div>
           )}
         </Section>
 
-        <Section id="weekend" title={t('home.weekendGetaways')} to="/explore?time=weekend">
-          <Row query={weekend} render={(p) => <PlaceCard place={p} />} />
-        </Section>
-
-        <Section id="food" title={t('home.keralaFood')} subtitle={t('home.keralaFoodSub')} to="/food">
-          <Row query={dishes} render={(d) => <DishCard dish={d} />} />
-          <div className="mt-5">
-            <Row query={eateries} render={(b) => <BusinessCard business={b} />} />
+        <Section id="food" eyebrow={t('home.foodEyebrow')} title={t('home.foodTitle')} subtitle={t('home.foodSub')} to="/food">
+          <div className={CARD_GRID_4.replace('sm:grid-cols-2', 'grid-cols-2')}>
+            {(dishes.data?.data || Array.from({ length: 4 }, (_, i) => ({ _id: `s${i}`, skeleton: true }))).map((d) => (d.skeleton ? <CardSkeleton key={d._id} /> : <DishCard key={d._id} dish={d} />))}
           </div>
         </Section>
 
-        <Section id="events" title={t('home.eventsThisWeek')} to="/events?when=week">
-          <Row query={events} render={(e) => <EventCard event={e} />} />
-        </Section>
-
-        <Section id="stays" title={t('home.recommendedStays')} to="/stays">
-          <Row query={stays} render={(s) => <StayCard stay={s} />} />
-        </Section>
-
-        <Section id="moods" title={t('home.byMood')}>
-          <div className="flex flex-wrap gap-2.5">
-            {MOODS.map((m) => (
-              <MoodChip key={m} mood={m} />
-            ))}
-          </div>
-        </Section>
-
-        <Section id="time" title={t('home.byTime')}>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {TIME_BUCKETS.map((b) => (
-              <Link key={b} to={`/explore?time=${b}`} className="card flex items-center gap-3 p-4 transition hover:ring-forest-300">
-                <span className="grid size-10 place-items-center rounded-full bg-forest-50 text-forest-700">
-                  <Clock className="size-5" aria-hidden />
-                </span>
-                <span className="text-sm font-semibold text-forest-950">{t(`time.${b}`)}</span>
-              </Link>
-            ))}
-          </div>
-        </Section>
-
-        <section className="my-10 overflow-hidden rounded-[1.75rem] bg-forest-900 p-6 text-white sm:p-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="flex gap-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-laterite-500">
-                <Siren className="size-6" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-2xl text-white">{t('home.touristHelp')}</h2>
-                <p className="mt-2 max-w-2xl text-sm text-forest-100">{t('home.touristHelpSub')}</p>
-              </div>
+        <Section id="events" title={t('home.eventsTitle')} to="/events">
+          {events.data?.data?.length ? (
+            <div className="grid divide-y divide-line border-y border-line md:grid-cols-2 md:gap-x-10 md:divide-y-0 [&>*]:border-line md:[&>*]:border-b">
+              {events.data.data.map((e) => <EventCard key={e._id} event={e} variant="compact" />)}
             </div>
-            <Button to="/help" variant="light" size="lg">
-              {t('home.openHelp')} <ArrowRight className="size-4" aria-hidden />
-            </Button>
+          ) : events.isLoading ? (
+            <Skeleton className="h-48" />
+          ) : (
+            <EmptyState />
+          )}
+        </Section>
+
+        <section className="my-8 grid overflow-hidden rounded-[var(--radius-panel)] bg-white md:grid-cols-2" aria-labelledby="plan-title">
+          <div className="p-8 sm:p-12">
+            <p className="eyebrow mb-3">{t('home.planEyebrow')}</p>
+            <h2 id="plan-title" className="h2">{t('home.planTitle')}</h2>
+            <p className="mt-3 text-[15px] text-ink-soft">{t('home.planBody')}</p>
+            <Button to="/trip-builder" className="mt-7"><Sparkles className="size-4" aria-hidden /> {t('home.planCta')}</Button>
+          </div>
+          <div className="relative min-h-56 bg-sand-200">
+            <HeroArt className="absolute inset-0 h-full w-full" />
           </div>
         </section>
+
+        <Link to="/help" className="mb-16 flex items-center gap-4 rounded-[var(--radius-panel)] border border-line px-5 py-4 transition hover:border-laterite-100 hover:bg-laterite-50 sm:px-7">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-laterite-500 text-white"><Phone className="size-4" aria-hidden /></span>
+          <span className="flex-1">
+            <span className="block text-[15px] font-semibold">{t('home.helpTitle')}</span>
+            <span className="block text-sm text-muted">{t('home.helpBody')}</span>
+          </span>
+          <ArrowRight className="size-4 text-muted" aria-hidden />
+        </Link>
       </div>
     </>
   );
