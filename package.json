@@ -2,7 +2,8 @@
   "name": "kerala-travel-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "Kerala Travel & Local Discovery Platform — Kerala, Discovered Your Way.",
+  "type": "module",
+  "description": "Kerala Travel & Local Discovery Platform \u2014 Kerala, Discovered Your Way.",
   "workspaces": [
     "server",
     "client"

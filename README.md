@@ -229,6 +229,8 @@ NODE_ENV=production MONGODB_URI=… JWT_SECRET=… CLIENT_URL=https://your.domai
 ```
 In production the server serves `client/dist` with SPA fallback, enables a CSP, `secure` cookies and `trust proxy` (run behind HTTPS).
 
+**Vercel:** `vercel.json` builds the client as static files and runs the Express API as one serverless function (`api/index.js`). Every `/api/*` request goes to that function; any other path falls back to the SPA. Set `MONGODB_URI` (e.g. MongoDB Atlas, with network access open to `0.0.0.0/0` because Vercel has no fixed egress IPs), `JWT_SECRET`, `CLIENT_URL`, and optionally `ADMIN_EMAIL`/`ADMIN_PASSWORD`. Each build runs `server/src/seeds/bootstrap.js`, which seeds sample data only when the database is empty and creates the admin if missing. It never wipes data, and if the database is unreachable it only logs a warning.
+
 **Split hosting:** deploy `client/dist` to a static host/CDN and the API to a Node host. Set `VITE_API_URL` at client build time and `CLIENT_URL` on the server. For cross-site deployments the auth cookie's `SameSite=Lax` must become `None` (with `secure`) — or, preferably, serve the API from a subdomain of the same site.
 
 Also: create MongoDB Atlas indexes automatically on first boot (Mongoose `autoIndex`), set up backups, run `npm run create-admin` once, rotate the seeded admin password, and verify/replace all demo content.
