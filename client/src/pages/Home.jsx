@@ -71,7 +71,7 @@ export default function Home() {
   const weekend = useQuery({ queryKey: ['places', 'weekend-home'], queryFn: () => endpoints.places({ time: 'weekend', limit: 4 }) });
   const districts = useQuery({ queryKey: ['districts'], queryFn: endpoints.districts });
   const dishes = useQuery({ queryKey: ['dishes', 'home'], queryFn: () => endpoints.dishes({ limit: 4 }) });
-  const eateries = useQuery({ queryKey: ['businesses', 'home-food'], queryFn: () => endpoints.businesses({ section: 'food', limit: 4, sort: 'rating' }) });
+  const eateries = useQuery({ queryKey: ['businesses', 'home-food'], queryFn: () => endpoints.businesses({ kind: 'restaurant,street-food', district: 'kozhikode,ernakulam', limit: 4 }) });
   const events = useQuery({ queryKey: ['events', 'week-home'], queryFn: () => endpoints.events({ when: 'week', limit: 4 }) });
   const stays = useQuery({ queryKey: ['stays', 'home'], queryFn: () => endpoints.stays({ limit: 4 }) });
 

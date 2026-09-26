@@ -66,7 +66,7 @@ export default function PlaceDetail() {
         <SaveButton type="place" doc={place} variant="button" />
         <ShareButton title={name} text={place.shortDescription} />
         <Button variant="secondary" to={`/directions?to=${lng},${lat}&toLabel=${encodeURIComponent(place.name)}`}>
-          <Route className="size-4" aria-hidden /> {t('nav.travel')}
+          <Route className="size-4" aria-hidden /> {t('place.routePlanner')}
         </Button>
         <Button variant="ghost" to={`/trip-builder?district=${place.district}`}>
           <Sparkles className="size-4" aria-hidden /> {t('place.addToTrip')}
@@ -127,7 +127,7 @@ export default function PlaceDetail() {
             </dl>
             {fee.notes && <p className="mt-2 flex gap-1.5 text-xs text-muted"><IndianRupee className="size-3.5 shrink-0" aria-hidden />{fee.notes}</p>}
             <div className="mt-4">
-              <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><CalendarRange className="size-4" aria-hidden />{t('common.openingHours')}</h3>
+              <h3 className="mb-2 flex items-center gap-1.5 font-sans text-sm font-semibold"><CalendarRange className="size-4" aria-hidden />{t('common.openingHours')}</h3>
               <OpeningHours hours={place.openingHours} />
             </div>
           </Panel>

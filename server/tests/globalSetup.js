@@ -7,7 +7,8 @@ let mongod;
 
 export async function setup({ provide }) {
   if (process.env.MONGODB_URI_TEST) {
-    provide('mongoUri', process.env.MONGODB_URI_TEST.replace(/\/[^/?]*(\?|$)/, '/$1'));
+    // Server root only, e.g. mongodb://127.0.0.1:27017 — each suite appends its own database name.
+    provide('mongoUri', process.env.MONGODB_URI_TEST.replace(/\/+$/, ''));
     return;
   }
   mongod = await MongoMemoryServer.create();

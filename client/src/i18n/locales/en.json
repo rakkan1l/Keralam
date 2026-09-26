@@ -383,7 +383,8 @@
       "fri": "Fri",
       "sat": "Sat",
       "sun": "Sun"
-    }
+    },
+    "routePlanner": "Route planner"
   },
   "tri": {
     "yes": "Yes",
