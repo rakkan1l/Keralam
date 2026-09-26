@@ -125,7 +125,7 @@ export function planDemo(scored, inputs, startCoords) {
       for (const p of pool) {
         if (used.has(String(p._id))) continue;
         // Balance interest score against travel distance from the current position.
-        const cost = haversineKm(cursor, p.location.coordinates) / 15 - p._score;
+        const cost = haversineKm(cursor, p.location.coordinates) / 8 - p._score;
         if (cost < bestCost) {
           bestCost = cost;
           best = p;
@@ -171,6 +171,11 @@ export async function buildItinerary({ inputs, plan, start, candidates, generato
     let lunchDone = inputs.duration === 'few-hours';
 
     for (const place of plan[d].places) {
+      // Lunch before moving on once it is past midday.
+      if (!lunchDone && clock >= 12 * 60) {
+        clock = await addMeal(items, 'Lunch', cursor, clock, inputs);
+        lunchDone = true;
+      }
       const leg = estimateRoad(cursor, place.location.coordinates);
       const travelMin = Math.round((leg.distanceKm / speed) * 60);
       if (clock + travelMin > window.end - 30) {

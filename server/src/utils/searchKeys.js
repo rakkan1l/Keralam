@@ -11,7 +11,7 @@ export function foldKey(input = '') {
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9ഀ-ൿ]+/g, '')
-    .replace(/zh/g, 'l')
+    .replace(/zh?/g, 'l') // ഴ is written zh, z or l
     .replace(/([bcdgkpt])h/g, '$1')
     .replace(/w/g, 'v')
     .replace(/ee/g, 'i')

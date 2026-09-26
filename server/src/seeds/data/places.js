@@ -1,0 +1,121 @@
+// Destination seed data for local development.
+// These are real, well-known destinations, but every record here is UNVERIFIED:
+// coordinates are approximate, descriptions are general editorial text, and opening
+// hours / entry fees / safety details are deliberately left "unknown". Editors must
+// verify each record (admin → Places → Verify) before it is presented as verified.
+
+const P = (name, district, lat, lng, categories, moods, hours, extra = {}) => ({
+  name,
+  district,
+  location: { type: 'Point', coordinates: [lng, lat], approximate: true },
+  categories,
+  moods,
+  visitDurationHours: hours,
+  status: 'published',
+  ...extra,
+});
+
+const beach = { entryFee: { isFree: true, verified: false, notes: 'Public beach — no entry fee expected; parking may be charged.' }, budgetLevel: 'free', safety: { notes: 'Sea conditions change quickly. Swim only where lifeguards indicate it is safe, and avoid the sea during rough weather.' } };
+const falls = { safety: { slipperyTerrain: 'yes', notes: 'Rocks near waterfalls are slippery; stay behind barriers. Access may be restricted during heavy rain.' }, gemDetails: { monsoonSuitable: 'unknown' } };
+const monsoonMonths = [6, 7, 8, 9];
+
+export const places = [
+  // Thiruvananthapuram
+  P('Kovalam Beach', 'thiruvananthapuram', 8.3988, 76.982, ['beaches'], ['romantic', 'sunrise-sunset'], 3, { ...beach, nameMl: 'കോവളം ബീച്ച്', alternateNames: ['Kovalam', 'Lighthouse Beach'], shortDescription: 'Crescent beaches beside a red-and-white lighthouse, lined with cafés and small guesthouses.', familyFriendly: 'yes', bestMonths: [10, 11, 12, 1, 2, 3], featured: true, tags: ['lighthouse', 'sunset'] }),
+  P('Varkala Cliff', 'thiruvananthapuram', 8.7379, 76.7163, ['beaches', 'viewpoints', 'photography'], ['peaceful', 'sunrise-sunset', 'photography'], 4, { ...beach, nameMl: 'വർക്കല', alternateNames: ['Varkala', 'Papanasam Beach'], shortDescription: 'Laterite cliffs above a long beach, with a clifftop walkway of cafés and sunset views.', weekendGetaway: true, bestMonths: [10, 11, 12, 1, 2, 3], featured: true, tags: ['cliff', 'cafes', 'sunset'] }),
+  P('Ponmudi', 'thiruvananthapuram', 8.7597, 77.1167, ['hill-stations', 'viewpoints'], ['peaceful', 'photography'], 6, { nameMl: 'പൊന്മുടി', shortDescription: 'A hill station reached by a road of hairpin bends, with misty viewpoints over the Ghats.', gemDetails: { roadCondition: 'unknown', mobileNetwork: 'unknown' }, bestMonths: [9, 10, 11, 12, 1, 2], tags: ['hairpins', 'mist'] }),
+  P('Napier Museum', 'thiruvananthapuram', 8.509, 76.9553, ['museums', 'heritage'], ['rainy-day', 'family', 'local-culture'], 2, { indoor: true, shortDescription: 'A distinctive 19th-century museum building set in landscaped gardens near the city zoo.', familyFriendly: 'yes', tags: ['art', 'architecture'] }),
+  P('Sree Padmanabhaswamy Temple', 'thiruvananthapuram', 8.4828, 76.9437, ['religious', 'heritage'], ['local-culture'], 2, { alternateNames: ['Padmanabhaswamy Temple'], shortDescription: 'The landmark temple at the heart of the old city. Temple dress codes and entry rules apply — confirm locally.', tags: ['temple', 'architecture'] }),
+  P('Poovar Estuary', 'thiruvananthapuram', 8.3167, 77.0667, ['backwaters', 'beaches'], ['peaceful', 'romantic'], 3, { alternateNames: ['Poovar'], shortDescription: 'Where the Neyyar river meets the sea — mangrove channels and a golden sandbar reached by boat.', tags: ['boat', 'mangroves'] }),
+  P('Kappil Beach', 'thiruvananthapuram', 8.7806, 76.68, ['beaches', 'backwaters'], ['peaceful', 'sunrise-sunset'], 2, { ...beach, hiddenGem: true, shortDescription: 'A quiet strip of sand where the backwater lake almost touches the sea, north of Varkala.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', parking: 'unknown', mobileNetwork: 'unknown', bestTimeToVisit: 'Late afternoon for sunset' } }),
+
+  // Kollam
+  P("Jatayu Earth's Center", 'kollam', 8.8633, 76.865, ['adventure', 'viewpoints', 'family'], ['adventure', 'family', 'photography'], 4, { alternateNames: ['Jatayu Rock', 'Jatayu Para', 'Chadayamangalam'], shortDescription: 'A hilltop nature park crowned by a giant sculpture of the mythical bird Jatayu.', familyFriendly: 'yes', featured: true, tags: ['sculpture', 'cable car'] }),
+  P('Ashtamudi Lake', 'kollam', 8.95, 76.59, ['backwaters', 'lakes-dams'], ['peaceful', 'romantic'], 3, { shortDescription: 'A many-armed backwater lake fringed with coconut palms, fishing nets and island villages.', weekendGetaway: true, tags: ['houseboat', 'lake'] }),
+  P('Thenmala Eco-tourism', 'kollam', 8.96, 77.06, ['forests', 'adventure', 'family'], ['adventure', 'family'], 5, { alternateNames: ['Thenmala'], shortDescription: 'A forest eco-tourism zone with trails, a suspension bridge and leisure activities near a reservoir.', familyFriendly: 'yes', tags: ['eco tourism', 'trails'] }),
+  P('Palaruvi Waterfalls', 'kollam', 8.95, 77.15, ['waterfalls', 'forests'], ['peaceful', 'photography'], 3, { ...falls, hiddenGem: true, shortDescription: 'A tall waterfall in forest country near the Tamil Nadu border.', crowdLevel: 'moderate', gemDetails: { accessDifficulty: 'moderate', roadCondition: 'unknown', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'unknown', bestTimeToVisit: 'After the monsoon when the falls are full' } }),
+  P('Munroe Island', 'kollam', 8.99, 76.61, ['backwaters', 'villages', 'photography'], ['peaceful', 'local-culture', 'photography'], 4, { hiddenGem: true, alternateNames: ['Mundrothuruthu', 'Munroe Thuruthu'], shortDescription: 'A cluster of islets where canoe rides slip through narrow canals past village homes.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', roadCondition: 'fair', parking: 'partial', mobileNetwork: 'good', monsoonSuitable: 'unknown', bestTimeToVisit: 'Early morning canoe ride' } }),
+
+  // Pathanamthitta
+  P('Gavi', 'pathanamthitta', 9.437, 77.165, ['forests', 'wildlife', 'nature-walks'], ['adventure', 'peaceful'], 8, { hiddenGem: true, shortDescription: 'A remote forest destination of cardamom hills, lakes and misty grasslands. Entry is regulated — check permits in advance.', crowdLevel: 'low', weekendGetaway: true, safety: { wildlifeRisk: 'yes', notes: 'Inside forest areas; follow forest department instructions.' }, gemDetails: { accessDifficulty: 'moderate', roadCondition: 'poor', parking: 'unknown', mobileNetwork: 'none', monsoonSuitable: 'unknown', bestTimeToVisit: 'Unknown — confirm with the forest department' } }),
+  P('Aranmula', 'pathanamthitta', 9.327, 76.688, ['religious', 'heritage', 'villages'], ['local-culture'], 2, { shortDescription: 'A riverside temple village known for its snake-boat traditions and the handcrafted Aranmula metal mirror.', tags: ['metal mirror', 'snake boat'] }),
+  P('Konni Elephant Camp', 'pathanamthitta', 9.226, 76.853, ['wildlife', 'family'], ['family'], 2, { alternateNames: ['Konni'], shortDescription: 'A forest-department elephant camp and eco-tourism centre.', familyFriendly: 'yes' }),
+
+  // Alappuzha
+  P('Alappuzha Beach', 'alappuzha', 9.493, 76.317, ['beaches'], ['family', 'sunrise-sunset'], 2, { ...beach, alternateNames: ['Alleppey Beach'], shortDescription: 'A broad town beach with an old pier and lighthouse nearby.', familyFriendly: 'yes' }),
+  P('Punnamada Backwaters', 'alappuzha', 9.51, 76.35, ['backwaters'], ['peaceful', 'romantic', 'photography'], 6, { alternateNames: ['Alleppey backwaters', 'Punnamada Lake', 'Alappuzha Backwaters'], nameMl: 'പുന്നമട', shortDescription: 'The starting point for many houseboat and shikara cruises through canals and paddy fields.', weekendGetaway: true, featured: true, tags: ['houseboat', 'shikara'] }),
+  P('Marari Beach', 'alappuzha', 9.6, 76.298, ['beaches', 'villages'], ['peaceful', 'romantic'], 3, { ...beach, alternateNames: ['Mararikulam'], shortDescription: 'A calm fishing-village beach with a slower pace than the town beaches.', crowdLevel: 'low' }),
+  P('Pathiramanal Island', 'alappuzha', 9.62, 76.39, ['wildlife', 'nature-walks'], ['peaceful', 'photography'], 2, { hiddenGem: true, shortDescription: 'A small island in Vembanad Lake reached by boat, with a walking path through trees and birdlife.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', parking: 'no', mobileNetwork: 'unknown', monsoonSuitable: 'unknown', bestTimeToVisit: 'Morning for birds' } }),
+
+  // Kottayam
+  P('Kumarakom Bird Sanctuary', 'kottayam', 9.625, 76.425, ['wildlife', 'backwaters', 'nature-walks'], ['peaceful', 'photography'], 3, { nameMl: 'കുമരകം', alternateNames: ['Kumarakom'], shortDescription: 'Mangrove and lakeside trails on the shore of Vembanad Lake, popular with birdwatchers.', bestMonths: [11, 12, 1, 2], featured: true }),
+  P('Illikkal Kallu', 'kottayam', 9.772, 76.859, ['viewpoints', 'treks', 'hill-stations'], ['adventure', 'photography'], 4, { hiddenGem: true, alternateNames: ['Illickal Kallu'], shortDescription: 'A dramatic rock peak with sweeping views, reached by a short but steep walk.', safety: { slipperyTerrain: 'yes', notes: 'Exposed rock; strong winds and mist are possible.' }, gemDetails: { accessDifficulty: 'moderate', roadCondition: 'fair', parking: 'partial', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Clear mornings outside the monsoon' } }),
+
+  // Idukki
+  P('Munnar Tea Estates', 'idukki', 10.0889, 77.0595, ['hill-stations', 'photography'], ['peaceful', 'photography', 'romantic'], 8, { nameMl: 'മൂന്നാർ', alternateNames: ['Munnar'], shortDescription: 'Rolling tea plantations and cool hill air around the town of Munnar.', weekendGetaway: true, featured: true, bestMonths: [9, 10, 11, 12, 1, 2, 3, 4, 5], tags: ['tea', 'mist'] }),
+  P('Eravikulam National Park', 'idukki', 10.197, 77.059, ['wildlife', 'hill-stations'], ['family', 'photography'], 4, { alternateNames: ['Rajamala'], shortDescription: 'Montane grasslands near Munnar, home to the Nilgiri tahr. Seasonal closures may apply — confirm locally.', familyFriendly: 'yes' }),
+  P('Thekkady', 'idukki', 9.6031, 77.1615, ['wildlife', 'forests'], ['adventure', 'family'], 8, { nameMl: 'തേക്കടി', alternateNames: ['Periyar', 'Kumily', 'Periyar Tiger Reserve'], shortDescription: 'A spice-country town beside the Periyar reserve, known for lake cruises and forest walks.', weekendGetaway: true, safety: { wildlifeRisk: 'yes', notes: 'Forest activities are regulated by the forest department.' } }),
+  P('Idukki Arch Dam', 'idukki', 9.843, 76.976, ['lakes-dams', 'viewpoints'], ['photography'], 2, { shortDescription: 'An arch dam between two granite hills; visitor access is periodically opened by authorities.' }),
+  P('Vagamon Meadows', 'idukki', 9.686, 76.905, ['hill-stations', 'adventure', 'viewpoints'], ['peaceful', 'adventure', 'photography'], 6, { nameMl: 'വാഗമൺ', alternateNames: ['Vagamon', 'Wagamon', 'Vagaman'], shortDescription: 'Rolling grassy meadows, pine forest and viewpoints on the Idukki–Kottayam border.', weekendGetaway: true, familyFriendly: 'yes' }),
+  P('Kolukkumalai', 'idukki', 10.067, 77.217, ['hill-stations', 'viewpoints', 'photography'], ['sunrise-sunset', 'adventure', 'photography'], 5, { hiddenGem: true, alternateNames: ['Kolukumalai'], shortDescription: 'High-altitude tea estates known for sunrise views above the clouds, reached by off-road jeep.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'difficult', roadCondition: 'offroad', parking: 'unknown', mobileNetwork: 'none', monsoonSuitable: 'no', bestTimeToVisit: 'Before dawn for sunrise' } }),
+
+  // Ernakulam
+  P('Fort Kochi', 'ernakulam', 9.9658, 76.2421, ['heritage', 'photography'], ['local-culture', 'photography', 'food'], 4, { nameMl: 'ഫോർട്ട് കൊച്ചി', alternateNames: ['Fort Cochin', 'Kochi'], shortDescription: 'Colonial-era streets, Chinese fishing nets, art cafés and the waterfront promenade.', featured: true, familyFriendly: 'yes', tags: ['chinese fishing nets', 'art', 'cafes'] }),
+  P('Mattancherry Palace', 'ernakulam', 9.958, 76.259, ['museums', 'heritage'], ['rainy-day', 'local-culture'], 1.5, { indoor: true, alternateNames: ['Dutch Palace'], shortDescription: 'A palace museum known for its Kerala murals, near the Jew Town spice market.' }),
+  P('Cherai Beach', 'ernakulam', 10.142, 76.178, ['beaches'], ['family', 'sunrise-sunset'], 3, { ...beach, shortDescription: 'A long beach on Vypin island with backwaters just behind the shoreline.', familyFriendly: 'yes' }),
+  P('Bhoothathankettu', 'ernakulam', 10.136, 76.663, ['forests', 'lakes-dams', 'nature-walks'], ['family', 'peaceful'], 3, { shortDescription: 'Forest trails and boating around a reservoir on the Periyar river near Kothamangalam.', familyFriendly: 'yes' }),
+  P('Kadamakudy Islands', 'ernakulam', 10.06, 76.25, ['villages', 'backwaters', 'photography'], ['peaceful', 'sunrise-sunset', 'photography'], 3, { hiddenGem: true, alternateNames: ['Kadamakkudy'], shortDescription: 'Paddy fields and pokkali farms on islands just outside the city — a favourite for sunrise photography.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', roadCondition: 'fair', parking: 'partial', mobileNetwork: 'good', monsoonSuitable: 'unknown', bestTimeToVisit: 'Sunrise' } }),
+
+  // Thrissur
+  P('Athirappilly Falls', 'thrissur', 10.2851, 76.5698, ['waterfalls', 'forests'], ['family', 'photography'], 3, { ...falls, nameMl: 'അതിരപ്പിള്ളി വെള്ളച്ചാട്ടം', alternateNames: ['Athirapally', 'Athirappally', 'Athirapilly'], shortDescription: 'A broad waterfall on the Chalakudy river surrounded by forest.', familyFriendly: 'yes', featured: true, weekendGetaway: false }),
+  P('Vazhachal Falls', 'thrissur', 10.299, 76.607, ['waterfalls', 'forests'], ['peaceful', 'photography'], 1.5, { ...falls, shortDescription: 'Cascades a short drive upstream from Athirappilly.' }),
+  P('Vadakkunnathan Temple', 'thrissur', 10.5244, 76.2143, ['religious', 'heritage'], ['local-culture'], 1.5, { shortDescription: 'The historic temple at the centre of Thrissur town, surrounded by the Thekkinkadu ground.' }),
+  P('Kerala Kalamandalam', 'thrissur', 10.74, 76.28, ['heritage', 'museums'], ['local-culture', 'rainy-day'], 2, { indoor: true, alternateNames: ['Cheruthuruthy', 'Kalamandalam'], shortDescription: 'A renowned institution for Kerala’s classical performing arts. Visitor access varies — confirm in advance.' }),
+  P('Snehatheeram Beach', 'thrissur', 10.425, 76.065, ['beaches', 'parks'], ['family', 'sunrise-sunset'], 2, { ...beach, hiddenGem: true, alternateNames: ['Thalikulam Beach'], shortDescription: 'A landscaped beach park on a quieter stretch of the Thrissur coast.', crowdLevel: 'low' }),
+
+  // Palakkad
+  P('Malampuzha Dam and Gardens', 'palakkad', 10.835, 76.686, ['lakes-dams', 'parks', 'family'], ['family'], 3, { nameMl: 'മലമ്പുഴ', alternateNames: ['Malampuzha'], shortDescription: 'Landscaped gardens, a reservoir and family attractions below the Western Ghats.', familyFriendly: 'yes' }),
+  P('Silent Valley National Park', 'palakkad', 11.083, 76.43, ['forests', 'wildlife'], ['peaceful', 'adventure'], 6, { shortDescription: 'An evergreen rainforest reserve. Entry is regulated by the forest department — plan in advance.', safety: { restrictedAreas: 'yes', wildlifeRisk: 'yes', notes: 'Visits are only possible under forest department arrangements.' } }),
+  P('Palakkad Fort', 'palakkad', 10.764, 76.655, ['heritage'], ['local-culture', 'family'], 1, { alternateNames: ["Tipu's Fort"], shortDescription: 'A granite fort in the town centre surrounded by a moat and open grounds.', familyFriendly: 'yes' }),
+  P('Nelliyampathy', 'palakkad', 10.535, 76.694, ['hill-stations', 'viewpoints'], ['peaceful', 'photography'], 6, { hiddenGem: true, alternateNames: ['Nelliampathy'], shortDescription: 'Orange and tea estates on a hill road of many bends, with valley viewpoints.', weekendGetaway: true, gemDetails: { accessDifficulty: 'moderate', roadCondition: 'fair', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Unknown' } }),
+  P('Kollengode Village', 'palakkad', 10.613, 76.69, ['villages', 'photography'], ['local-culture', 'photography', 'peaceful'], 3, { hiddenGem: true, alternateNames: ['Kollengode'], shortDescription: 'Paddy fields and palms framed by the Nelliyampathy hills — a classic rural Kerala landscape.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', roadCondition: 'good', parking: 'partial', mobileNetwork: 'good', monsoonSuitable: 'yes', bestTimeToVisit: 'After the monsoon when the fields are green' } }),
+
+  // Malappuram
+  P('Nilambur Teak Museum', 'malappuram', 11.28, 76.23, ['museums', 'forests'], ['rainy-day', 'family'], 1.5, { indoor: true, alternateNames: ['Teak Museum'], shortDescription: 'A museum on the history and science of teak, near the old Conolly teak plantation.', familyFriendly: 'yes' }),
+  P('Kottakkunnu', 'malappuram', 11.044, 76.074, ['parks', 'viewpoints'], ['family', 'sunrise-sunset'], 2, { shortDescription: 'A hilltop park in Malappuram town with gardens and views over the surroundings.', familyFriendly: 'yes' }),
+  P('Adyanpara Waterfalls', 'malappuram', 11.353, 76.213, ['waterfalls', 'forests'], ['peaceful', 'photography'], 2, { ...falls, hiddenGem: true, shortDescription: 'A tiered waterfall over rock slabs in the forests near Nilambur.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'moderate', roadCondition: 'unknown', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Post-monsoon' } }),
+  P('Padinjarekara Beach', 'malappuram', 10.8, 75.92, ['beaches'], ['peaceful', 'sunrise-sunset'], 2, { ...beach, hiddenGem: true, alternateNames: ['Ponnani estuary'], shortDescription: 'A beach at the meeting point of the Bharathapuzha river and the sea near Ponnani.', crowdLevel: 'low' }),
+
+  // Kozhikode
+  P('Kozhikode Beach', 'kozhikode', 11.259, 75.77, ['beaches', 'family'], ['food', 'sunrise-sunset', 'family'], 2, { ...beach, alternateNames: ['Calicut Beach'], shortDescription: 'The city’s sunset promenade with old piers and snack stalls nearby.', familyFriendly: 'yes', featured: true }),
+  P('Kappad Beach', 'kozhikode', 11.383, 75.726, ['beaches', 'heritage'], ['peaceful', 'local-culture'], 2, { ...beach, nameMl: 'കാപ്പാട്', alternateNames: ['Kappad'], shortDescription: 'A rocky beach associated with the arrival of Vasco da Gama in 1498.' }),
+  P('Thusharagiri Waterfalls', 'kozhikode', 11.472, 76.052, ['waterfalls', 'treks'], ['adventure', 'photography'], 3, { ...falls, alternateNames: ['Thusharagiri'], shortDescription: 'A series of waterfalls in the forested foothills, with trails upstream.' }),
+  P('Kadalundi Bird Sanctuary', 'kozhikode', 11.125, 75.829, ['wildlife', 'nature-walks'], ['peaceful', 'photography'], 2, { hiddenGem: true, alternateNames: ['Kadalundi'], shortDescription: 'Islets and mudflats where the Kadalundi river meets the sea — a stop for migratory birds.', crowdLevel: 'low', bestMonths: [11, 12, 1, 2, 3] }),
+  P('Mananchira Square', 'kozhikode', 11.255, 75.78, ['parks', 'heritage'], ['family', 'local-culture'], 1, { shortDescription: 'A green square around an old tank in the heart of the city.', familyFriendly: 'yes' }),
+
+  // Wayanad
+  P('Edakkal Caves', 'wayanad', 11.626, 76.236, ['heritage', 'treks'], ['adventure', 'local-culture'], 3, { nameMl: 'എടക്കൽ ഗുഹകൾ', alternateNames: ['Edakkal'], shortDescription: 'Rock shelters with ancient petroglyphs, reached by a steep uphill walk.', safety: { slipperyTerrain: 'yes', notes: 'Steep steps and rock sections.' }, accessibility: { stairsOrSlopes: 'yes', wheelchair: 'no', notes: 'Steep climb — not suitable for limited mobility.' } }),
+  P('Chembra Peak', 'wayanad', 11.513, 76.088, ['treks', 'hill-stations'], ['adventure', 'photography'], 6, { nameMl: 'ചെമ്പ്ര', alternateNames: ['Chembra'], shortDescription: 'A forest-department trek to a heart-shaped lake on the flanks of Wayanad’s highest peak. Permits and seasonal closures apply.', gemDetails: { accessDifficulty: 'difficult' }, safety: { wildlifeRisk: 'unknown', notes: 'Guided treks only; check with the forest department.' } }),
+  P('Banasura Sagar Dam', 'wayanad', 11.67, 75.956, ['lakes-dams', 'family'], ['family', 'photography'], 3, { shortDescription: 'An earthen dam and reservoir scattered with small islands.', familyFriendly: 'yes', weekendGetaway: true }),
+  P('Soochipara Falls', 'wayanad', 11.517, 76.16, ['waterfalls', 'forests'], ['adventure', 'photography'], 3, { ...falls, alternateNames: ['Sentinel Rock Waterfalls'], shortDescription: 'A three-tiered waterfall reached by a forest walk.' }),
+  P('Kuruva Island', 'wayanad', 11.819, 76.094, ['forests', 'nature-walks'], ['peaceful', 'family'], 3, { hiddenGem: true, alternateNames: ['Kuruvadweep'], shortDescription: 'River islands of dense forest on the Kabini, crossed by bamboo raft. Visitor access is regulated.', gemDetails: { accessDifficulty: 'moderate', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Unknown — confirm opening' } }),
+
+  // Kannur
+  P('Muzhappilangad Drive-in Beach', 'kannur', 11.796, 75.454, ['beaches', 'adventure'], ['family', 'adventure', 'sunrise-sunset'], 2, { ...beach, alternateNames: ['Muzhappilangad'], shortDescription: 'A long firm-sand beach where vehicles are permitted to drive along the shore.', familyFriendly: 'yes', featured: true }),
+  P("St. Angelo Fort", 'kannur', 11.853, 75.372, ['heritage'], ['local-culture', 'photography'], 1.5, { alternateNames: ['Kannur Fort'], shortDescription: 'A seaside fort built by the Portuguese in the early 16th century.' }),
+  P('Paithalmala', 'kannur', 12.15, 75.556, ['hill-stations', 'treks'], ['adventure', 'peaceful'], 5, { hiddenGem: true, alternateNames: ['Paithal Mala'], shortDescription: 'A forested hilltop near the Karnataka border with a trail to a viewpoint.', gemDetails: { accessDifficulty: 'moderate', roadCondition: 'fair', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Unknown' } }),
+  P('Parassinikadavu', 'kannur', 11.981, 75.402, ['religious'], ['local-culture'], 2, { alternateNames: ['Parassinikkadavu', 'Muthappan Temple'], shortDescription: 'A riverside temple town known for its Theyyam tradition. Performance times vary — confirm locally.' }),
+  P('Dharmadam Island', 'kannur', 11.776, 75.46, ['beaches', 'nature-walks'], ['peaceful'], 1.5, { hiddenGem: true, alternateNames: ['Dharmadam'], shortDescription: 'A small island near the shore, reachable on foot at low tide — check tide conditions and local rules.', safety: { strongCurrents: 'unknown', notes: 'Tides can cut off the island; do not attempt to cross at high tide.' } }),
+
+  // Kasaragod
+  P('Bekal Fort', 'kasaragod', 12.392, 75.033, ['heritage', 'beaches', 'photography'], ['photography', 'sunrise-sunset', 'family'], 3, { nameMl: 'ബേക്കൽ കോട്ട', alternateNames: ['Bekal'], shortDescription: 'A large seaside fort with walls rising straight out of the Arabian Sea.', familyFriendly: 'yes', featured: true, weekendGetaway: true }),
+  P('Ranipuram', 'kasaragod', 12.415, 75.362, ['hill-stations', 'treks'], ['adventure', 'peaceful'], 5, { hiddenGem: true, shortDescription: 'Grassland hills and shola forest trails in the far north of Kerala.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'moderate', roadCondition: 'fair', parking: 'unknown', mobileNetwork: 'patchy', monsoonSuitable: 'no', bestTimeToVisit: 'Post-monsoon' } }),
+  P('Chandragiri Fort', 'kasaragod', 12.466, 75.007, ['heritage', 'viewpoints'], ['sunrise-sunset', 'peaceful'], 1.5, { hiddenGem: true, shortDescription: 'A hilltop fort above the Chandragiri river mouth — a quiet spot for sunset.', crowdLevel: 'low', gemDetails: { accessDifficulty: 'easy', parking: 'unknown', mobileNetwork: 'good', monsoonSuitable: 'unknown', bestTimeToVisit: 'Sunset' } }),
+  P('Ananthapura Lake Temple', 'kasaragod', 12.572, 75.007, ['religious', 'lakes-dams'], ['local-culture', 'peaceful'], 1.5, { alternateNames: ['Ananthapura'], shortDescription: 'A temple standing in the middle of a small lake.' }),
+];
+
+// Two records deliberately left in the workflow to demonstrate the admin verification queue.
+places.find((p) => p.name === 'Idukki Arch Dam').status = 'needs_verification';
+places.find((p) => p.name === 'Paithalmala').status = 'draft';
+
+export { monsoonMonths };

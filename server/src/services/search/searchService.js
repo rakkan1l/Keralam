@@ -75,7 +75,8 @@ export async function smartSearch({ q = '', lat, lng, limit = 8, userId, filters
   const stayFilter = { ...pub, ...districtClause, ...(kw || {}) };
   if (f.budget === 'budget') stayFilter.priceBand = { $in: ['budget', 'unknown'] };
   const eventFilter = { ...pub, ...districtClause, endDate: { $gte: new Date() }, ...(kw || {}) };
-  const dishFilter = { ...pub, ...(kw ? kw : foodCats.length ? { categories: { $in: foodCats } } : {}) };
+  const dishCats = foodCats.length > 1 ? foodCats.filter((c) => c !== 'budget') : foodCats;
+  const dishFilter = { ...pub, ...(kw ? kw : dishCats.length ? { categories: { $in: dishCats } } : {}) };
 
   const opts = { near, limit, project: CARD_PROJECTION };
   const [places, food, stays, events, dishes] = await Promise.all([
