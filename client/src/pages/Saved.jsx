@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Heart, ListPlus, Map, History, Plus, Lock, Globe } from 'lucide-react';
+import { Heart, ListPlus, Luggage, History, Plus, Lock, Globe, ArrowUpRight } from 'lucide-react';
 import Seo from '../components/Seo';
 import Button from '../components/ui/Button';
 import Modal from '../components/ui/Modal';
-import Badge from '../components/ui/Badge';
-import { AnyCard } from '../components/cards/Cards';
-import { GridSkeleton } from '../components/ui/Skeleton';
+import { PageIntro } from '../components/ui/Section';
+import { AnyCard, CARD_GRID } from '../components/cards/Cards';
+import { GridSkeleton, Skeleton } from '../components/ui/Skeleton';
 import { EmptyState, ErrorState } from '../components/ui/States';
 import { useAuth } from '../context/AuthContext';
 import { useSaved } from '../context/SavedContext';
@@ -24,14 +24,16 @@ function SavedItems() {
   const q = useQuery({ queryKey: ['me', 'saved'], queryFn: endpoints.saved, enabled: Boolean(user) });
   const items = user ? q.data : guestItems;
   if (user && q.error) return <ErrorState error={q.error} onRetry={q.refetch} />;
-  if (user && q.isLoading) return <GridSkeleton />;
-  if (!items?.length) return <EmptyState icon={Heart} title={t('saved.empty')} body={t('saved.emptyBody')} action={<Button to="/explore">{t('nav.explore')}</Button>} />;
+  if (user && q.isLoading) return <GridSkeleton className={CARD_GRID} count={3} />;
+  if (!items?.length) return <EmptyState icon={Heart} title={t('saved.empty')} body={t('saved.emptyBody')} action={<Button to="/explore">{t('home.exploreCta')}</Button>} />;
   return (
     <>
-      {!user && <p className="mb-4 rounded-2xl bg-lagoon-50 p-3 text-sm text-lagoon-700">{t('common.signInToSave')} <Link to="/login?next=/saved" className="font-semibold underline">{t('nav.login')}</Link></p>}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {items.map((s) => <AnyCard key={`${s.targetType}${s.targetId}`} type={s.targetType} item={s.item} />)}
-      </div>
+      {!user && (
+        <p className="mb-8 text-sm text-muted">
+          {t('common.signInToSave')} <Link to="/login?next=/saved" className="link">{t('nav.login')}</Link>
+        </p>
+      )}
+      <div className={CARD_GRID}>{items.map((s) => <AnyCard key={`${s.targetType}${s.targetId}`} type={s.targetType} item={s.item} />)}</div>
     </>
   );
 }
@@ -55,23 +57,28 @@ function Lists() {
   });
   return (
     <>
-      <Button onClick={() => setOpen(true)} className="mb-5"><Plus className="size-4" aria-hidden />{t('saved.newList')}</Button>
+      <div className="mb-6 flex justify-end"><Button variant="secondary" onClick={() => setOpen(true)}><Plus className="size-4" aria-hidden />{t('saved.newList')}</Button></div>
       {q.isLoading ? (
-        <GridSkeleton count={3} />
+        <Skeleton className="h-40" />
       ) : q.data?.length ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="divide-y divide-line border-y border-line">
           {q.data.map((l) => (
-            <Link key={l._id} to={`/lists/${l._id}`} className="card p-5 transition hover:ring-forest-300">
-              <div className="flex items-start justify-between">
-                <h3 className="font-sans text-lg font-semibold">{l.name}</h3>
-                {l.isPublic ? <Globe className="size-4 text-lagoon-500" aria-label={t('saved.public')} /> : <Lock className="size-4 text-muted" aria-hidden />}
-              </div>
-              <p className="mt-1 text-sm text-muted">{l.items.length} · {formatDate(l.updatedAt, i18n.language)}</p>
-            </Link>
+            <li key={l._id}>
+              <Link to={`/lists/${l._id}`} className="group flex items-center justify-between gap-4 py-4">
+                <span className="min-w-0">
+                  <span className="flex items-center gap-2 text-[16px] font-semibold">
+                    {l.name}
+                    {l.isPublic ? <Globe className="size-4 text-lagoon-500" aria-label={t('saved.public')} /> : <Lock className="size-3.5 text-muted" aria-hidden />}
+                  </span>
+                  <span className="text-[13px] text-muted">{t('saved.itemsCount', { count: l.items.length })} · {formatDate(l.updatedAt, i18n.language)}</span>
+                </span>
+                <ArrowUpRight className="size-4 text-muted transition group-hover:text-ink" aria-hidden />
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <EmptyState icon={ListPlus} title={t('saved.lists')} body={t('saved.emptyBody')} />
+        <EmptyState icon={ListPlus} title={t('saved.noLists')} body={t('saved.listsBody')} />
       )}
       <Modal open={open} onClose={() => setOpen(false)} title={t('saved.newList')} size="sm">
         <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) create.mutate(); }} className="space-y-4">
@@ -79,7 +86,7 @@ function Lists() {
             <label className="label" htmlFor="list-name">{t('saved.listName')}</label>
             <input id="list-name" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required />
           </div>
-          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} className="size-4 accent-forest-700" />{t('saved.public')}</label>
+          <label className="flex items-center gap-2.5 text-sm"><input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} className="size-4 accent-forest-700" />{t('saved.public')}</label>
           <div className="flex justify-end"><Button type="submit" loading={create.isPending}>{t('common.submit')}</Button></div>
         </form>
       </Modal>
@@ -90,30 +97,34 @@ function Lists() {
 function Trips() {
   const { t, i18n } = useTranslation();
   const q = useQuery({ queryKey: ['me', 'trips'], queryFn: endpoints.trips });
-  if (q.isLoading) return <GridSkeleton count={3} />;
-  if (!q.data?.length) return <EmptyState icon={Map} title={t('saved.noTrips')} body={t('trip.subtitle')} action={<Button to="/trip-builder" variant="accent">{t('home.buildTrip')}</Button>} />;
+  if (q.isLoading) return <Skeleton className="h-40" />;
+  if (!q.data?.length) return <EmptyState icon={Luggage} title={t('saved.noTrips')} body={t('trip.subtitle')} action={<Button to="/trip-builder">{t('home.planCta')}</Button>} />;
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="divide-y divide-line border-y border-line">
       {q.data.map((trip) => (
-        <Link key={trip._id} to={`/trips/${trip._id}`} className="card p-5 transition hover:ring-forest-300">
-          <h3 className="font-sans text-lg font-semibold">{trip.title}</h3>
-          <p className="mt-1 text-sm text-muted">{trip.days?.length || 0} {t('trip.days').toLowerCase()} · {trip.summary?.totalDistanceKm ?? '—'} km</p>
-          <div className="mt-3 flex gap-1.5">
-            <Badge tone={trip.generator === 'ai' ? 'green' : 'amber'}>{trip.generator}</Badge>
-            {trip.isPublic && <Badge tone="blue">{t('saved.public')}</Badge>}
-            <Badge>{formatDate(trip.updatedAt, i18n.language)}</Badge>
-          </div>
-        </Link>
+        <li key={trip._id}>
+          <Link to={`/trips/${trip._id}`} className="group flex items-center justify-between gap-4 py-4">
+            <span className="min-w-0">
+              <span className="block truncate text-[16px] font-semibold">{trip.title}</span>
+              <span className="text-[13px] text-muted">
+                {t('saved.tripMeta', { days: trip.days?.length || 0, km: trip.summary?.totalDistanceKm ?? '—' })} · {formatDate(trip.updatedAt, i18n.language)}
+                {trip.isPublic && ` · ${t('saved.shared')}`}
+              </span>
+            </span>
+            <ArrowUpRight className="size-4 text-muted transition group-hover:text-ink" aria-hidden />
+          </Link>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
 function Recent() {
+  const { t } = useTranslation();
   const q = useQuery({ queryKey: ['me', 'recent'], queryFn: endpoints.recent });
-  if (q.isLoading) return <GridSkeleton />;
-  if (!q.data?.length) return <EmptyState icon={History} />;
-  return <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{q.data.map((r) => <AnyCard key={`${r.targetType}${r.targetId}`} type={r.targetType} item={r.item} />)}</div>;
+  if (q.isLoading) return <GridSkeleton className={CARD_GRID} count={3} />;
+  if (!q.data?.length) return <EmptyState icon={History} title={t('saved.noRecent')} body={t('saved.recentBody')} />;
+  return <div className={CARD_GRID}>{q.data.map((r) => <AnyCard key={`${r.targetType}${r.targetId}`} type={r.targetType} item={r.item} />)}</div>;
 }
 
 export default function Saved() {
@@ -122,35 +133,33 @@ export default function Saved() {
   const [params, set] = useQueryParams();
   const tab = params.tab || 'places';
   const tabs = [
-    ['places', t('saved.places'), Heart],
-    ['lists', t('saved.lists'), ListPlus],
-    ['trips', t('saved.trips'), Map],
-    ['recent', t('saved.recent'), History],
+    ['places', t('saved.places')],
+    ['trips', t('saved.trips')],
+    ['lists', t('saved.lists')],
+    ['recent', t('saved.recent')],
   ];
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-20">
       <Seo title={t('saved.title')} noindex />
-      <h1 className="text-3xl sm:text-4xl">{t('saved.title')}</h1>
-      <div className="mt-6 flex gap-2 overflow-x-auto pb-1" role="tablist">
-        {tabs.map(([key, label, Icon]) => (
-          <button key={key} role="tab" aria-selected={tab === key} type="button" onClick={() => set({ tab: key === 'places' ? '' : key })} className={cx('chip shrink-0', tab === key && 'chip-active')}>
-            <Icon className="size-4" aria-hidden /> {label}
+      <PageIntro eyebrow={t('nav.sectionPersonal')} title={t('saved.title')} />
+      <div className="mb-10 flex gap-6 overflow-x-auto border-b border-line" role="tablist">
+        {tabs.map(([key, label]) => (
+          <button key={key} role="tab" aria-selected={tab === key} type="button" onClick={() => set({ tab: key === 'places' ? '' : key })} className={cx('-mb-px shrink-0 border-b-2 pb-3 text-[15px] font-medium transition', tab === key ? 'border-forest-800 text-ink' : 'border-transparent text-muted hover:text-ink')}>
+            {label}
           </button>
         ))}
       </div>
-      <div className="mt-6">
-        {tab === 'places' ? (
-          <SavedItems />
-        ) : !user ? (
-          <EmptyState icon={Lock} title={t('saved.signInFor')} body={t('auth.guestNote')} action={<Button to={`/login?next=/saved?tab=${tab}`}>{t('nav.login')}</Button>} />
-        ) : tab === 'lists' ? (
-          <Lists />
-        ) : tab === 'trips' ? (
-          <Trips />
-        ) : (
-          <Recent />
-        )}
-      </div>
+      {tab === 'places' ? (
+        <SavedItems />
+      ) : !user ? (
+        <EmptyState icon={Lock} title={t('saved.signInFor')} body={t('auth.guestNote')} action={<Button to={`/login?next=${encodeURIComponent(`/saved?tab=${tab}`)}`}>{t('nav.login')}</Button>} />
+      ) : tab === 'lists' ? (
+        <Lists />
+      ) : tab === 'trips' ? (
+        <Trips />
+      ) : (
+        <Recent />
+      )}
     </div>
   );
 }

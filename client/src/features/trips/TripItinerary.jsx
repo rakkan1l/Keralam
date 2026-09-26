@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MapPin, Utensils, BedDouble, ArrowUp, ArrowDown, Trash2, TriangleAlert, CloudRain, Info, Car, Clock } from 'lucide-react';
+import { MapPin, Utensils, BedDouble, ArrowUp, ArrowDown, Trash2, TriangleAlert, CloudRain, Info, Car } from 'lucide-react';
 import Badge from '../../components/ui/Badge';
 import LazyMap from '../../components/map/LazyMap';
 import { formatDuration, inr, districtName, formatDate, cx } from '../../utils/format';
@@ -43,64 +43,59 @@ export default function TripItinerary({ trip, onChange }) {
   const line = markers.map((m) => [m.lat, m.lng]);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-      <div className="space-y-6">
+    <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
+      <div className="min-w-0 space-y-12">
         {trip.days.map((day, dayIdx) => (
-          <section key={day.day} className="card p-5" aria-labelledby={`day-${day.day}`}>
-            <header className="mb-4 flex items-baseline justify-between">
-              <h3 id={`day-${day.day}`} className="text-xl">{t('trip.day', { n: day.day })}</h3>
+          <section key={day.day} aria-labelledby={`day-${day.day}`}>
+            <header className="mb-5 flex items-baseline justify-between gap-4 border-b border-line pb-3">
+              <h2 id={`day-${day.day}`} className="h2">{t('trip.day', { n: day.day })}</h2>
               {day.date && <span className="text-sm text-muted">{formatDate(day.date, lang, { weekday: 'long', day: 'numeric', month: 'short' })}</span>}
             </header>
-            <ol className="relative space-y-3 border-l-2 border-forest-100 pl-5">
+            <ol className="relative ml-2 space-y-5 border-l border-line pl-7">
               {day.items.map((item, idx) => {
                 const Icon = KIND_ICON[item.kind] || MapPin;
                 const href = hrefFor(item);
                 return (
                   <li key={item._id || `${item.title}-${idx}`} className="relative">
-                    <span className="absolute -left-[31px] top-1 grid size-5 place-items-center rounded-full bg-forest-700 text-white ring-4 ring-white">
-                      <Icon className="size-3" aria-hidden />
+                    <span className={cx('absolute top-0.5 -left-[41px] grid size-7 place-items-center rounded-full ring-4 ring-sand-100', item.kind === 'place' ? 'bg-forest-800 text-white' : 'bg-white text-forest-700 border border-line')}>
+                      <Icon className="size-3.5" aria-hidden />
                     </span>
                     {item.travelFromPrevious?.distanceKm > 0.5 && (
-                      <p className="mb-1 flex items-center gap-1 text-xs text-muted">
-                        <Car className="size-3.5" aria-hidden /> {item.travelFromPrevious.distanceKm} km · {formatDuration(item.travelFromPrevious.durationMin)} ({t('common.estimated').toLowerCase()})
+                      <p className="mb-1.5 flex items-center gap-1.5 text-xs text-muted">
+                        <Car className="size-3.5" aria-hidden /> {item.travelFromPrevious.distanceKm} km · {formatDuration(item.travelFromPrevious.durationMin)} · {t('common.estimated').toLowerCase()}
                       </p>
                     )}
-                    <div className="rounded-2xl bg-sand-50 p-3 ring-1 ring-sand-200">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="flex items-center gap-2 text-xs font-semibold text-forest-700">
-                            <Clock className="size-3.5" aria-hidden /> {item.startTime}
-                            {item.durationMin ? ` · ${formatDuration(item.durationMin)}` : ''}
-                          </p>
-                          <p className="mt-0.5 font-medium">{href ? <Link to={href} className="hover:underline">{item.title}</Link> : item.title}</p>
-                          {item.district && <p className="text-xs text-muted">{districtName(item.district, lang)}</p>}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-forest-700 tabular-nums">
+                          {item.startTime}
+                          {item.durationMin ? <span className="font-normal text-muted"> · {formatDuration(item.durationMin)}</span> : ''}
+                        </p>
+                        <h3 className="mt-0.5 text-[16px] font-semibold">{href ? <Link to={href} className="hover:underline">{item.title}</Link> : item.title}</h3>
+                        {item.district && <p className="text-[13px] text-muted">{districtName(item.district, lang)}</p>}
+                        {item.notes?.filter(Boolean).map((n) => <p key={n} className="mt-1 text-sm text-ink-soft">{n}</p>)}
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {item.costEstimate && (
+                            <Badge tone={CONF_TONE[item.costEstimate.confidence]}>
+                              {item.costEstimate.amount != null ? `${inr(item.costEstimate.amount)} · ` : ''}
+                              {t(`trip.confidence.${item.costEstimate.confidence || 'unavailable'}`)}
+                            </Badge>
+                          )}
+                          {item.kind === 'place' && item.openingHoursStatus === 'conflict' && <Badge tone="red">{t('trip.openingConflict')}</Badge>}
+                          {item.kind === 'place' && item.openingHoursStatus === 'unknown' && <Badge tone="outline">{t('trip.hoursUnknown')}</Badge>}
                         </div>
-                        {onChange && (
-                          <div className="flex shrink-0 gap-0.5">
-                            <button type="button" onClick={() => move(dayIdx, idx, -1)} className="rounded-full p-1.5 hover:bg-white" aria-label={t('trip.moveUp')}><ArrowUp className="size-4" /></button>
-                            <button type="button" onClick={() => move(dayIdx, idx, 1)} className="rounded-full p-1.5 hover:bg-white" aria-label={t('trip.moveDown')}><ArrowDown className="size-4" /></button>
-                            <button type="button" onClick={() => remove(dayIdx, idx)} className="rounded-full p-1.5 hover:bg-white" aria-label={t('trip.remove')}><Trash2 className="size-4 text-laterite-600" /></button>
-                          </div>
+                        {item.warnings?.length > 0 && (
+                          <ul className="mt-2 space-y-1">
+                            {item.warnings.map((w) => <li key={w} className="flex gap-1.5 text-xs text-laterite-700"><TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden />{w}</li>)}
+                          </ul>
                         )}
                       </div>
-                      {item.notes?.filter(Boolean).map((n) => <p key={n} className="mt-1 text-sm text-forest-900">{n}</p>)}
-                      <div className="mt-2 flex flex-wrap gap-1.5">
-                        {item.costEstimate && (
-                          <Badge tone={CONF_TONE[item.costEstimate.confidence]}>
-                            {item.costEstimate.amount != null ? `${inr(item.costEstimate.amount)} · ` : ''}
-                            {t(`trip.confidence.${item.costEstimate.confidence || 'unavailable'}`)}
-                          </Badge>
-                        )}
-                        {item.kind === 'place' && item.openingHoursStatus === 'conflict' && <Badge tone="red">{t('trip.openingConflict')}</Badge>}
-                        {item.kind === 'place' && item.openingHoursStatus === 'unknown' && <Badge>{t('trip.hoursUnknown')}</Badge>}
-                      </div>
-                      {item.costEstimate?.note && <p className="mt-1 text-xs text-muted">{item.costEstimate.note}</p>}
-                      {item.warnings?.length > 0 && (
-                        <ul className="mt-2 space-y-1">
-                          {item.warnings.map((w) => (
-                            <li key={w} className="flex gap-1.5 text-xs text-laterite-700"><TriangleAlert className="mt-0.5 size-3.5 shrink-0" aria-hidden />{w}</li>
-                          ))}
-                        </ul>
+                      {onChange && (
+                        <div className="flex shrink-0 gap-0.5">
+                          <button type="button" onClick={() => move(dayIdx, idx, -1)} disabled={idx === 0} className="grid size-9 place-items-center rounded-full text-muted hover:bg-sand-200 hover:text-ink disabled:opacity-30" aria-label={`${t('trip.moveUp')}: ${item.title}`}><ArrowUp className="size-4" /></button>
+                          <button type="button" onClick={() => move(dayIdx, idx, 1)} disabled={idx === day.items.length - 1} className="grid size-9 place-items-center rounded-full text-muted hover:bg-sand-200 hover:text-ink disabled:opacity-30" aria-label={`${t('trip.moveDown')}: ${item.title}`}><ArrowDown className="size-4" /></button>
+                          <button type="button" onClick={() => remove(dayIdx, idx)} className="grid size-9 place-items-center rounded-full text-muted hover:bg-laterite-50 hover:text-laterite-600" aria-label={`${t('trip.remove')}: ${item.title}`}><Trash2 className="size-4" /></button>
+                        </div>
                       )}
                     </div>
                   </li>
@@ -112,59 +107,48 @@ export default function TripItinerary({ trip, onChange }) {
         ))}
       </div>
 
-      <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start">
-        <LazyMap className="h-72" markers={markers} route={line} />
-        <div className="card p-5">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-forest-50 p-3">
-              <p className="text-xs text-muted">{t('trip.totalDistance')}</p>
-              <p className="text-lg font-semibold">{s.totalDistanceKm ?? '—'} km</p>
-            </div>
-            <div className="rounded-xl bg-forest-50 p-3">
-              <p className="text-xs text-muted">{t('trip.travelTime')}</p>
-              <p className="text-lg font-semibold">{formatDuration(s.totalTravelMin)}</p>
-            </div>
+      <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+        <LazyMap className="h-64" markers={markers} route={line} />
+        <div className="panel p-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div><p className="caption">{t('trip.totalDistance')}</p><p className="font-display text-2xl">{s.totalDistanceKm ?? '—'}<span className="ml-1 text-sm text-muted">km</span></p></div>
+            <div><p className="caption">{t('trip.travelTime')}</p><p className="font-display text-2xl">{formatDuration(s.totalTravelMin) || '—'}</p></div>
           </div>
           {s.estimatedCost && (
-            <div className="mt-4">
-              <p className="text-sm font-semibold">{t('trip.estimatedCost')}: {inr(s.estimatedCost.min)}</p>
+            <div className="mt-5 border-t border-line pt-4">
+              <p className="caption">{t('trip.estimatedCost')}</p>
+              <p className="font-display text-2xl">{inr(s.estimatedCost.min)}</p>
               <p className="mt-1 text-xs text-muted">{s.estimatedCost.note}</p>
             </div>
           )}
           {s.unknownCosts?.length > 0 && (
-            <details className="mt-3 text-sm">
+            <details className="mt-4 text-sm">
               <summary className="cursor-pointer font-medium">{t('trip.unknownCosts')} ({s.unknownCosts.length})</summary>
               <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs text-muted">{s.unknownCosts.map((c) => <li key={c}>{c}</li>)}</ul>
             </details>
           )}
         </div>
         {s.weatherAlternatives?.length > 0 && (
-          <div className="card p-5">
-            <h3 className="mb-2 flex items-center gap-2 font-sans text-sm font-semibold"><CloudRain className="size-4 text-lagoon-500" aria-hidden />{t('trip.weatherAlternatives')}</h3>
+          <div className="border-t border-line pt-5">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><CloudRain className="size-4 text-lagoon-500" aria-hidden />{t('trip.weatherAlternatives')}</h3>
             <ul className="space-y-1.5 text-sm">
-              {s.weatherAlternatives.map((w) => (
-                <li key={w.forItem}>{w.forItem} → <Link to={`/places/${w.slug}`} className="font-medium text-forest-700 hover:underline">{w.alternative}</Link></li>
-              ))}
+              {s.weatherAlternatives.map((w) => <li key={w.forItem}>{w.forItem} → <Link to={`/places/${w.slug}`} className="link">{w.alternative}</Link></li>)}
             </ul>
           </div>
         )}
-        {(s.warnings?.length > 0 || s.seasonalNotes?.length > 0) && (
-          <div className="card p-5">
-            {s.warnings?.length > 0 && (
-              <>
-                <h3 className="mb-2 flex items-center gap-2 font-sans text-sm font-semibold"><TriangleAlert className="size-4 text-turmeric-600" aria-hidden />{t('trip.warnings')}</h3>
-                <ul className="mb-3 space-y-1 text-sm">{s.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
-              </>
-            )}
-            {s.seasonalNotes?.length > 0 && (
-              <>
-                <h3 className="mb-2 flex items-center gap-2 font-sans text-sm font-semibold"><Info className="size-4 text-lagoon-500" aria-hidden />{t('trip.seasonalNotes')}</h3>
-                <ul className="space-y-1 text-sm">{s.seasonalNotes.map((w) => <li key={w}>{w}</li>)}</ul>
-              </>
-            )}
+        {s.warnings?.length > 0 && (
+          <div className="border-t border-line pt-5">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><TriangleAlert className="size-4 text-turmeric-600" aria-hidden />{t('trip.warnings')}</h3>
+            <ul className="space-y-1 text-sm text-ink-soft">{s.warnings.map((w) => <li key={w}>{w}</li>)}</ul>
           </div>
         )}
-        {trip.disclaimer && <p className={cx('text-xs text-muted')}>{trip.disclaimer}</p>}
+        {s.seasonalNotes?.length > 0 && (
+          <div className="border-t border-line pt-5">
+            <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><Info className="size-4 text-lagoon-500" aria-hidden />{t('trip.seasonalNotes')}</h3>
+            <ul className="space-y-1 text-sm text-ink-soft">{s.seasonalNotes.map((w) => <li key={w}>{w}</li>)}</ul>
+          </div>
+        )}
+        {trip.disclaimer && <p className="text-xs text-muted">{trip.disclaimer}</p>}
       </aside>
     </div>
   );

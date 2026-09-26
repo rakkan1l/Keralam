@@ -6,8 +6,8 @@ const ToastContext = createContext(null);
 const ICONS = { success: CheckCircle2, error: AlertTriangle, info: Info };
 const TONES = {
   success: 'bg-forest-900 text-white',
-  error: 'bg-laterite-700 text-white',
-  info: 'bg-white text-ink ring-1 ring-sand-300',
+  error: 'bg-laterite-600 text-white',
+  info: 'bg-white text-ink border border-line',
 };
 
 export function ToastProvider({ children }) {
@@ -31,11 +31,11 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-24 z-[70] flex flex-col items-center gap-2 px-4 md:bottom-6">
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[80] flex flex-col items-center gap-2 px-4">
         {toasts.map((t) => {
           const Icon = ICONS[t.type];
           return (
-            <div key={t.id} role="status" className={`pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl px-4 py-3 text-sm shadow-[var(--shadow-lift)] ${TONES[t.type]}`}>
+            <div key={t.id} role="status" className={`pointer-events-auto flex max-w-md items-center gap-3 rounded-2xl px-4 py-3 text-sm shadow-[var(--shadow-overlay)] ${TONES[t.type]}`}>
               <Icon className="size-5 shrink-0" aria-hidden />
               <span className="flex-1">{t.message}</span>
               <button type="button" onClick={() => dismiss(t.id)} className="opacity-70 hover:opacity-100" aria-label="Dismiss">

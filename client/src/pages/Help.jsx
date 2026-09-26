@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Phone, Siren, Hospital, Pill, ShieldAlert, Share2, MessageCircle, BadgeCheck, CircleHelp, LifeBuoy, Users } from 'lucide-react';
+import { Phone, Siren, Hospital, Pill, ShieldAlert, Share2, MessageCircle, BadgeCheck, CircleHelp, Users } from 'lucide-react';
 import Seo from '../components/Seo';
+import { PageIntro } from '../components/ui/Section';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import { NoticeList } from '../components/detail/Facts';
@@ -57,8 +58,8 @@ function ShareLocation() {
   };
 
   return (
-    <section className="card p-5 sm:p-6">
-      <h2 className="flex items-center gap-2 text-xl"><Share2 className="size-5 text-forest-600" aria-hidden />{t('help.shareLocation')}</h2>
+    <section className="panel">
+      <h2 className="h3 flex items-center gap-2 text-lg"><Share2 className="size-5 text-forest-600" aria-hidden />{t('help.shareLocation')}</h2>
       <p className="mt-1 text-sm text-muted">{t('help.shareLocationBody')}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         <Button onClick={shareNative} loading={status === 'locating'}><Share2 className="size-4" aria-hidden />{t('help.shareVia')}</Button>
@@ -66,7 +67,7 @@ function ShareLocation() {
         {link && <a href={`sms:?&body=${encodeURIComponent(message(link))}`} className="chip">SMS</a>}
       </div>
       {link && <p className="mt-3 break-all text-xs text-muted">{link}</p>}
-      <div className="mt-5 border-t border-sand-200 pt-4">
+      <div className="mt-5 border-t border-line pt-4">
         <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold"><Users className="size-4" aria-hidden />{t('help.trustedContacts')}</h3>
         {contacts.length ? (
           <ul className="space-y-2">
@@ -97,16 +98,15 @@ export default function Help() {
   const tips = t('help.tipsList', { returnObjects: true });
 
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-20">
       <Seo title={t('help.title')} description={t('home.touristHelpSub')} />
-      <h1 className="flex items-center gap-3 text-3xl sm:text-4xl"><LifeBuoy className="size-8 text-laterite-500" aria-hidden />{t('help.title')}</h1>
-      <p className="mt-2 text-muted">{t('help.subtitle')}</p>
+      <PageIntro eyebrow={t('nav.sectionHelp')} title={t('help.title')} subtitle={t('help.subtitle')} />
 
       {primary && (
-        <a href={`tel:${primary.number}`} className="mt-6 flex items-center justify-between gap-4 rounded-[1.75rem] bg-laterite-600 p-6 text-white shadow-[var(--shadow-lift)] transition hover:bg-laterite-700">
+        <a href={`tel:${primary.number}`} className="flex items-center justify-between gap-4 rounded-[var(--radius-panel)] bg-laterite-500 p-6 text-white transition hover:bg-laterite-600 sm:p-8">
           <span>
             <span className="flex items-center gap-2 text-sm font-medium text-laterite-100"><Siren className="size-5" aria-hidden />{t('help.emergencyLine')}</span>
-            <span className="mt-1 block font-display text-5xl">{primary.number}</span>
+            <span className="mt-1 block font-display text-6xl leading-none">{primary.number}</span>
             <span className="text-sm text-laterite-100">{primary.name}</span>
           </span>
           <span className="grid size-16 place-items-center rounded-full bg-white/15"><Phone className="size-7" aria-hidden /></span>
@@ -120,7 +120,7 @@ export default function Help() {
           ['pharmacies', Pill, t('help.pharmacies')],
           ['police', ShieldAlert, t('help.police')],
         ].map(([cat, Icon, label]) => (
-          <Link key={cat} to={`/near-me?category=${cat}`} className="card flex items-center gap-3 p-4 transition hover:ring-forest-300">
+          <Link key={cat} to={`/near-me?category=${cat}`} className="panel flex items-center gap-3 p-5 transition hover:bg-sand-50">
             <span className="grid size-11 place-items-center rounded-full bg-forest-50 text-forest-700"><Icon className="size-5" aria-hidden /></span>
             <span className="font-medium">{label}</span>
           </Link>
@@ -128,14 +128,14 @@ export default function Help() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <section className="card p-5 sm:p-6">
-          <h2 className="text-xl">{t('help.numbers')}</h2>
+        <section className="panel">
+          <h2 className="h3 text-lg">{t('help.numbers')}</h2>
           {error ? (
             <ErrorState error={error} onRetry={refetch} />
           ) : isLoading ? (
             <div className="mt-4 space-y-3">{[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-12" />)}</div>
           ) : (
-            <ul className="mt-3 divide-y divide-sand-200">
+            <ul className="mt-3 divide-y divide-line">
               {contacts.map((c) => (
                 <li key={c._id} className="flex items-center justify-between gap-3 py-3">
                   <div className="min-w-0">
@@ -153,7 +153,7 @@ export default function Help() {
                       {c.sourceUrl && <a href={c.sourceUrl} target="_blank" rel="noopener noreferrer" className="ml-2 text-xs text-forest-700 underline">{t('common.source')}</a>}
                     </div>
                   </div>
-                  <a href={`tel:${c.number}`} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-forest-800 px-4 py-2 text-sm font-semibold text-white hover:bg-forest-700">
+                  <a href={`tel:${c.number}`} className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-forest-800 px-4 text-sm font-semibold text-white tabular-nums hover:bg-forest-900">
                     <Phone className="size-4" aria-hidden /> {c.number}
                   </a>
                 </li>
@@ -164,12 +164,12 @@ export default function Help() {
 
         <div className="space-y-6">
           <ShareLocation />
-          <section className="card p-5 sm:p-6">
-            <h2 className="text-xl">{t('help.notices')}</h2>
+          <section className="panel">
+            <h2 className="h3 text-lg">{t('help.notices')}</h2>
             <div className="mt-3">{data?.notices?.length ? <NoticeList notices={data.notices} /> : <p className="text-sm text-muted">{t('help.noNotices')}</p>}</div>
           </section>
-          <section className="card p-5 sm:p-6">
-            <h2 className="text-xl">{t('help.tips')}</h2>
+          <section className="panel">
+            <h2 className="h3 text-lg">{t('help.tips')}</h2>
             {lang !== 'en' && <p className="mt-1 text-xs text-muted">{t('help.mlReviewNote')}</p>}
             {/* Safety guidance is shown in reviewed English until a human-reviewed translation exists. */}
             <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm">{(Array.isArray(tips) ? tips : en.help.tipsList).map((tip) => <li key={tip}>{tip}</li>)}</ul>

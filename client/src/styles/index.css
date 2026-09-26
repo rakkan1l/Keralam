@@ -90,6 +90,10 @@
   ::selection {
     @apply bg-forest-200;
   }
+  /* Grid and flex children may shrink below their content width (prevents overflow). */
+  :where(.grid) > * {
+    min-width: 0;
+  }
 }
 
 @layer components {

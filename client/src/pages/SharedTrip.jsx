@@ -16,14 +16,14 @@ export default function SharedTrip() {
   if (isLoading) return <PageLoader />;
   if (error) return <div className="container-page py-10"><ErrorState error={error} onRetry={refetch} /></div>;
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16">
       <Seo title={trip.title} description={`${trip.days.length}-day Kerala itinerary`} />
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-5 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between sm:pt-14">
         <div>
-          <h1 className="text-3xl">{trip.title}</h1>
+          <h1 className="h1">{trip.title}</h1>
           <Badge className="mt-1" tone={trip.generator === 'ai' ? 'green' : 'amber'}>{trip.generator === 'ai' ? t('trip.aiMode') : t('trip.demoMode')}</Badge>
         </div>
-        <Button to="/trip-builder" variant="accent">{t('home.buildTrip')}</Button>
+        <Button to="/trip-builder">{t('home.planCta')}</Button>
       </div>
       <TripItinerary trip={trip} />
     </div>

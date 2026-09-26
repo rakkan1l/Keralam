@@ -25,21 +25,21 @@ export default function Search() {
     enabled: q.length > 0,
   });
   const r = data?.results;
-  const grid = 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+  const grid = 'grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3';
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-20">
       <Seo title={t('search.title', { q })} noindex />
-      <SearchBar initial={q} />
-      <h1 className="mt-6 text-2xl sm:text-3xl">{t('search.title', { q })}</h1>
+      <div className="pt-10 sm:pt-14"><SearchBar initial={q} /></div>
+      <h1 className="h1 mt-10">{t('search.title', { q })}</h1>
       {data && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {data.interpretation.length > 0 && <span className="text-sm text-muted">{t('search.understood')}:</span>}
-          {data.interpretation.map((i) => <Badge key={`${i.type}-${i.label}`} tone="green">{i.type === 'district' ? districtName(i.value, i18n.language) : i.type === 'category' ? t(`categories.${i.value}`) : i.type === 'mood' ? t(`moods.${i.value}`) : i.label}</Badge>)}
+          {data.interpretation.map((i) => <Badge key={`${i.type}-${i.label}`} tone="outline">{i.type === 'district' ? districtName(i.value, i18n.language) : i.type === 'category' ? t(`categories.${i.value}`) : i.type === 'mood' ? t(`moods.${i.value}`) : i.label}</Badge>)}
           <span className="inline-flex items-center gap-1 text-xs text-muted"><Info className="size-3.5" aria-hidden />{t('search.structuredNote')}</span>
         </div>
       )}
       {data?.needsLocation && (
-        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-lagoon-50 p-4 text-sm text-lagoon-700">
+        <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 text-sm">
           {t('search.needsLocation')}
           <Button size="sm" onClick={() => request().catch(() => {})} loading={status === 'locating'}><LocateFixed className="size-4" aria-hidden />{t('nearby.askLocation')}</Button>
         </div>

@@ -172,10 +172,12 @@
     "approximateLocation": "Approximate location",
     "signInToSave": "Saved on this device. Sign in to keep it across devices.",
     "estimated": "Estimated",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "inEnglish": "Shown in English",
+    "moreUnverified": "{{count}} other details haven’t been verified yet."
   },
   "explore": {
-    "title": "Explore Kerala",
+    "title": "Discover Kerala",
     "subtitle": "Filter real destinations by district, category, mood, time, budget and season.",
     "useMyLocation": "Sort by distance from me",
     "hiddenGemsOnly": "Hidden gems only",
@@ -184,7 +186,9 @@
     "lowCrowd": "Low crowds",
     "indoor": "Rainy-day friendly",
     "inSeasonNow": "In season now",
-    "monsoonFriendly": "Monsoon friendly"
+    "monsoonFriendly": "Monsoon friendly",
+    "searchPlaceholder": "Search destinations, e.g. Munnar, waterfall, fort",
+    "nearMeShort": "Near me"
   },
   "categories": {
     "beaches": "Beaches",
@@ -341,7 +345,9 @@
       "sold-out": "Sold out",
       "at-venue": "Tickets at venue",
       "unknown": "Ticket status unknown"
-    }
+    },
+    "when": "When",
+    "details": "Details"
   },
   "nearby": {
     "title": "Near me",
@@ -370,7 +376,12 @@
       "railway-stations": "Railway stations",
       "airports": "Airports",
       "taxi": "Taxi & auto"
-    }
+    },
+    "unsupported": "This browser can’t share location. Choose a place instead.",
+    "orDistrict": "Or pick a district…",
+    "change": "Change",
+    "externalShort": "Also search Google Maps",
+    "emptyBody": "Nothing listed in this area yet. Try a larger radius or search Google Maps."
   },
   "place": {
     "about": "About",
@@ -425,7 +436,8 @@
       "sat": "Sat",
       "sun": "Sun"
     },
-    "routePlanner": "Route planner"
+    "routePlanner": "Route planner",
+    "seeBelow": "See hours below"
   },
   "tri": {
     "yes": "Yes",
@@ -459,7 +471,8 @@
     "whereToTry": "Where to try it",
     "priceRange": "Price range",
     "cuisines": "Cuisines",
-    "website": "Official website"
+    "website": "Official website",
+    "signature": "Known for"
   },
   "stays": {
     "title": "Places to stay",
@@ -471,7 +484,32 @@
     "noBookingLink": "No booking link yet — contact the property directly.",
     "priceFrom": "From ₹{{amount}} / night",
     "priceUnverified": "Price not verified",
-    "priceFromLabel": "Price per night from"
+    "priceFromLabel": "Price per night from",
+    "travellers": {
+      "solo": "Solo",
+      "couple": "Couples",
+      "family": "Families",
+      "group": "Groups",
+      "business": "Business",
+      "backpacker": "Backpackers"
+    },
+    "experiences": {
+      "beach": "Beach",
+      "hills": "Hills",
+      "backwater": "Backwater",
+      "forest": "Forest",
+      "city": "City",
+      "heritage": "Heritage",
+      "plantation": "Plantation",
+      "ayurveda": "Ayurveda"
+    },
+    "facilityNames": {
+      "wifi": "Wi-Fi",
+      "parking": "Parking",
+      "pool": "Pool",
+      "restaurant": "Restaurant"
+    },
+    "bookingTitle": "Booking"
   },
   "sections": {
     "shopping": {
@@ -504,11 +542,12 @@
     "essentials": "Hospitals & essential services",
     "neighbours": "Nearby districts",
     "map": "District map",
-    "places": "{{count}} places"
+    "places": "{{count}} places",
+    "explorePlaces": "Explore {{name}}"
   },
   "directions": {
     "title": "Directions & route planner",
-    "subtitle": "Plan a route, see distance and travel time, and find useful stops along the way.",
+    "subtitle": "Get distance and travel time between two places, or plan a route with stops along the way.",
     "from": "Starting point",
     "to": "Destination",
     "addStop": "Add stop",
@@ -536,11 +575,18 @@
       "attractions": "Attractions",
       "tea-coffee": "Tea & coffee",
       "rest-areas": "Rest areas"
-    }
+    },
+    "swap": "Swap start and destination",
+    "stops": "Stops",
+    "stopAdded": "Added {{name}}",
+    "alternatives": "Alternatives",
+    "fromStart": "{{km}} km from start",
+    "offRoute": "{{km}} km off route",
+    "planHint": "Plan a route to see viewpoints, food, fuel and rest stops along the way — then add them as stops."
   },
   "trip": {
-    "title": "AI Trip Builder",
-    "subtitle": "Tell us how you travel. We'll build a day-by-day plan from places in our database.",
+    "title": "Plan your trip",
+    "subtitle": "Answer a few questions and get a day-by-day plan built from real places — with honest notes about anything we don’t know.",
     "demoMode": "Demo planner",
     "demoModeBody": "AI is not configured on this server, so itineraries are built by rules from real database records. Nothing is invented.",
     "aiMode": "AI planner",
@@ -628,7 +674,40 @@
     "assistant": "Ask the travel assistant",
     "assistantPreview": "Preview — answers come from our database; AI responses appear once an AI provider is configured.",
     "askPlaceholder": "e.g. I am in Wayanad and have five hours. What can I do?",
-    "ask": "Ask"
+    "ask": "Ask",
+    "tripTitle": "Trip title",
+    "editPreferences": "Edit preferences",
+    "signInToSave": "Sign in to save",
+    "stepOf": "Step {{n}} of {{total}}",
+    "orDistrict": "Or start from a district",
+    "startRequired": "Choose a starting point or a district to continue.",
+    "pickAny": "Pick as many as you like — or none for a varied mix.",
+    "summary": "Your trip so far",
+    "steps": {
+      "start": "Starting point",
+      "duration": "Duration",
+      "budget": "Budget & group",
+      "interests": "Interests",
+      "transport": "Getting around",
+      "needs": "Special requirements"
+    },
+    "q": {
+      "start": "Where will you start?",
+      "duration": "How long do you have?",
+      "budget": "What’s your budget, and who’s coming?",
+      "interests": "What do you enjoy?",
+      "transport": "How will you get around?",
+      "needs": "Anything we should plan around?"
+    },
+    "paceHints": {
+      "relaxed": "Up to 3 stops a day",
+      "balanced": "Up to 4 stops a day",
+      "packed": "Up to 6 stops a day"
+    },
+    "confirmDelete": "Delete this trip? This can’t be undone.",
+    "deleteTrip": "Delete trip",
+    "stopSharing": "Stop sharing",
+    "chooseDistrict": "Choose a district"
   },
   "saved": {
     "title": "Saved",
@@ -643,7 +722,17 @@
     "addToList": "Add to list",
     "public": "Anyone with the link can view",
     "noTrips": "No saved trips yet",
-    "signInFor": "Sign in to create lists, save trips and sync across devices."
+    "signInFor": "Sign in to create lists, save trips and sync across devices.",
+    "itemsCount": "{{count}} items",
+    "noLists": "No lists yet",
+    "listsBody": "Group places into lists — a honeymoon shortlist, a monsoon weekend, rainy-day ideas.",
+    "tripMeta": "{{days}} days · {{km}} km",
+    "shared": "Shared",
+    "noRecent": "Nothing viewed yet",
+    "recentBody": "Places you open while signed in appear here.",
+    "confirmDeleteList": "Delete this list?",
+    "deleteList": "Delete list",
+    "by": "By {{name}}"
   },
   "help": {
     "title": "Help & emergency",
@@ -741,7 +830,8 @@
     "contactName": "Contact name",
     "contactPhone": "Phone",
     "addContact": "Add contact",
-    "myReviews": "My reviews"
+    "myReviews": "My reviews",
+    "contentDashboard": "Content dashboard"
   },
   "search": {
     "title": "Search results for “{{q}}”",
@@ -802,5 +892,18 @@
     "aboutTitle": "About Keralam",
     "privacyTitle": "Privacy",
     "termsTitle": "Terms of use"
+  },
+  "travelInfo": {
+    "kinds": {
+      "airport": "Airports",
+      "railway-station": "Railway stations",
+      "metro-station": "Metro",
+      "bus-stand": "Bus stations",
+      "boat-jetty": "Boat jetties"
+    },
+    "notesTitle": "Good to know",
+    "note1": "Locations shown are approximate. Check schedules and fares with the operator before you travel.",
+    "note2": "Hill roads in Idukki and Wayanad are slow and winding — allow extra time, especially after dark or in heavy rain.",
+    "note3": "Save emergency numbers before you set out — see"
   }
 }

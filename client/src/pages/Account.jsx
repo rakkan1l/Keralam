@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, LogOut, LayoutDashboard, Heart, Luggage } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { PageIntro } from '../components/ui/Section';
 import Seo from '../components/Seo';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
@@ -34,7 +35,7 @@ function PasswordForm() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({ resolver: zodResolver(passwordSchema) });
   return (
     <form
-      className="card space-y-4 p-6"
+      className="panel space-y-4"
       onSubmit={handleSubmit(async (v) => {
         try {
           await endpoints.changePassword(v);
@@ -45,7 +46,7 @@ function PasswordForm() {
         }
       })}
     >
-      <h2 className="text-xl">{t('account.changePassword')}</h2>
+      <h2 className="h3 text-lg">{t('account.changePassword')}</h2>
       <div>
         <label className="label" htmlFor="cp">{t('account.currentPassword')}</label>
         <input id="cp" type="password" autoComplete="current-password" className="input" {...register('currentPassword')} />
@@ -62,7 +63,8 @@ function PasswordForm() {
 
 export default function Account() {
   const { t, i18n } = useTranslation();
-  const { setUser } = useAuth();
+  const { setUser, logout, isStaff } = useAuth();
+  const navigate = useNavigate();
   const toast = useToast();
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ['me', 'profile'], queryFn: endpoints.profile });
@@ -91,12 +93,20 @@ export default function Account() {
   };
 
   return (
-    <div className="container-page max-w-3xl py-8">
+    <div className="container-page max-w-3xl pb-20">
       <Seo title={t('account.title')} noindex />
-      <h1 className="text-3xl">{t('account.title')}</h1>
-      <p className="mt-1 text-sm text-muted">{data.user.email} · <Badge>{data.user.role}</Badge></p>
-      <form onSubmit={handleSubmit(onSubmit)} className="card mt-6 space-y-5 p-6" noValidate>
-        <h2 className="text-xl">{t('account.profile')}</h2>
+      <PageIntro eyebrow={t('nav.myAccount')} title={data.user.name} subtitle={data.user.email} />
+      <div className="mb-10 grid gap-3 sm:grid-cols-3">
+        <Link to="/saved" className="panel flex items-center gap-3 p-5 transition hover:bg-sand-50"><Heart className="size-5 text-forest-600" aria-hidden /><span className="font-medium">{t('nav.savedPlaces')}</span></Link>
+        <Link to="/saved?tab=trips" className="panel flex items-center gap-3 p-5 transition hover:bg-sand-50"><Luggage className="size-5 text-forest-600" aria-hidden /><span className="font-medium">{t('nav.savedTrips')}</span></Link>
+        {isStaff ? (
+          <Link to="/admin" className="panel flex items-center gap-3 p-5 transition hover:bg-sand-50"><LayoutDashboard className="size-5 text-forest-600" aria-hidden /><span className="font-medium">{t('account.contentDashboard')}</span></Link>
+        ) : (
+          <button type="button" onClick={async () => { await logout(); navigate('/'); }} className="panel flex items-center gap-3 p-5 text-left transition hover:bg-sand-50"><LogOut className="size-5 text-laterite-600" aria-hidden /><span className="font-medium">{t('nav.logout')}</span></button>
+        )}
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="panel space-y-5" noValidate>
+        <h2 className="h3 text-lg">{t('account.profile')}</h2>
         <div>
           <label className="label" htmlFor="name">{t('auth.name')}</label>
           <input id="name" className="input" {...register('name')} />
@@ -104,7 +114,7 @@ export default function Account() {
         </div>
         <div>
           <label className="label" htmlFor="home">{t('account.homeDistrict')}</label>
-          <DistrictSelect id="home" value={watch('homeDistrict')} onChange={(v) => setValue('homeDistrict', v, { shouldDirty: true })} />
+          <DistrictSelect id="home" value={watch('homeDistrict')} onChange={(v) => setValue('homeDistrict', v, { shouldDirty: true })} placeholder="—" />
         </div>
         <div>
           <label className="label" htmlFor="lang">{t('account.language')}</label>
@@ -119,7 +129,7 @@ export default function Account() {
               <div key={f.id} className="grid grid-cols-[1fr_1fr_auto] gap-2">
                 <input aria-label={t('account.contactName')} placeholder={t('account.contactName')} className="input" {...register(`trustedContacts.${i}.name`)} />
                 <input aria-label={t('account.contactPhone')} placeholder={t('account.contactPhone')} type="tel" className="input" {...register(`trustedContacts.${i}.phone`)} />
-                <button type="button" onClick={() => remove(i)} className="grid size-11 place-items-center rounded-xl hover:bg-sand-100" aria-label={t('trip.remove')}><Trash2 className="size-4 text-laterite-600" /></button>
+                <button type="button" onClick={() => remove(i)} className="grid size-11 place-items-center rounded-[10px] hover:bg-sand-100" aria-label={t('trip.remove')}><Trash2 className="size-4 text-laterite-600" /></button>
               </div>
             ))}
           </div>
@@ -128,10 +138,10 @@ export default function Account() {
         <Button type="submit" loading={isSubmitting}>{t('account.saveChanges')}</Button>
       </form>
       <div className="mt-6"><PasswordForm /></div>
-      <section className="card mt-6 p-6">
-        <h2 className="text-xl">{t('account.myReviews')}</h2>
+      <section className="panel mt-6">
+        <h2 className="h3 text-lg">{t('account.myReviews')}</h2>
         {reviews.data?.length ? (
-          <ul className="mt-3 divide-y divide-sand-200">
+          <ul className="mt-3 divide-y divide-line">
             {reviews.data.map((r) => (
               <li key={r._id} className="flex items-center justify-between py-2 text-sm">
                 <span>{'★'.repeat(r.rating)} {r.title || r.text?.slice(0, 60)}</span>
@@ -143,6 +153,9 @@ export default function Account() {
           <p className="mt-2 text-sm text-muted">{t('reviews.none')} <Link to="/explore" className="underline">{t('nav.explore')}</Link></p>
         )}
       </section>
+      {isStaff && (
+        <Button variant="ghost" className="mt-6" onClick={async () => { await logout(); navigate('/'); }}><LogOut className="size-4" aria-hidden />{t('nav.logout')}</Button>
+      )}
     </div>
   );
 }

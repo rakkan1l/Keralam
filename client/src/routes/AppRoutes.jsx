@@ -33,6 +33,11 @@ const Login = lazy(() => import('../pages/Login'));
 const Register = lazy(() => import('../pages/Register'));
 const Account = lazy(() => import('../pages/Account'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const Trending = lazy(() => import('../pages/Trending'));
+const TravelInfo = lazy(() => import('../pages/TravelInfo'));
+const About = lazy(() => import('../pages/InfoPages').then((m) => ({ default: m.About })));
+const Privacy = lazy(() => import('../pages/InfoPages').then((m) => ({ default: m.Privacy })));
+const Terms = lazy(() => import('../pages/InfoPages').then((m) => ({ default: m.Terms })));
 const AdminApp = lazy(() => import('../features/admin/AdminApp'));
 
 export function RequireAuth({ children, roles }) {
@@ -87,6 +92,11 @@ export default function AppRoutes() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="account" element={<RequireAuth><Account /></RequireAuth>} />
+        <Route path="trending" element={<Trending />} />
+        <Route path="travel-info" element={<TravelInfo />} />
+        <Route path="about" element={<About />} />
+        <Route path="privacy" element={<Privacy />} />
+        <Route path="terms" element={<Terms />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

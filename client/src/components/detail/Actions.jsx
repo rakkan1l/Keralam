@@ -22,6 +22,15 @@ export function DirectionsButton({ doc, variant = 'primary' }) {
   );
 }
 
+/** Sticky row of primary actions shown under a detail hero. */
+export function ActionBar({ children }) {
+  return (
+    <div className="sticky top-16 z-30 border-b border-line bg-sand-100/90 backdrop-blur-md">
+      <div className="container-page flex gap-2 overflow-x-auto py-3 [scrollbar-width:none]">{children}</div>
+    </div>
+  );
+}
+
 export function ShareButton({ title, text, url }) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -77,7 +86,7 @@ export function ReportButton({ targetType, target }) {
   };
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-1.5 text-sm text-muted underline-offset-4 hover:text-forest-800 hover:underline">
+      <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-1.5 text-sm text-muted underline-offset-4 hover:text-ink hover:underline">
         <Flag className="size-4" aria-hidden /> {t('common.reportIssue')}
       </button>
       <Modal open={open} onClose={() => setOpen(false)} title={t('report.title')}>

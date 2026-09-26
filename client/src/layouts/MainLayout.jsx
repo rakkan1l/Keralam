@@ -6,7 +6,7 @@ import Footer from '../components/layout/Footer';
 import { PageLoader } from '../components/ui/PageLoader';
 
 // Pages whose first section is a full-bleed image; the header floats over it.
-const OVERLAY_ROUTES = [/^\/$/, /^\/places\/[^/]+$/, /^\/districts\/[^/]+$/];
+const OVERLAY_ROUTES = [/^\/$/, /^\/(places|districts|listings|stays|events)\/[^/]+$/, /^\/food\/dishes\/[^/]+$/];
 
 export default function MainLayout() {
   const { t } = useTranslation();

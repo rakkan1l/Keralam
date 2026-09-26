@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Star, MessageSquareText, Radio } from 'lucide-react';
+import { Star } from 'lucide-react';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
-import { Panel } from './Facts';
+import { InfoBlock } from './Facts';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { endpoints, errorMessage } from '../../services/api';
@@ -56,9 +56,9 @@ export function ReviewsSection({ targetType, target, reviews = [] }) {
   };
 
   return (
-    <Panel title={`${t('place.reviews')}${target.rating?.count ? ` · ${target.rating.average.toFixed(1)} (${target.rating.count})` : ''}`} icon={MessageSquareText}>
+    <InfoBlock title={`${t('place.reviews')}${target.rating?.count ? ` · ${target.rating.average.toFixed(1)} (${target.rating.count})` : ''}`}>
       {reviews.length ? (
-        <ul className="divide-y divide-sand-200">
+        <ul className="divide-y divide-line">
           {reviews.map((r) => (
             <li key={r._id} className="py-3">
               <div className="flex items-center justify-between">
@@ -101,7 +101,7 @@ export function ReviewsSection({ targetType, target, reviews = [] }) {
           </div>
         </form>
       </Modal>
-    </Panel>
+    </InfoBlock>
   );
 }
 
@@ -132,11 +132,11 @@ export function CommunityUpdates({ targetType, target, initial = [] }) {
   });
 
   return (
-    <Panel title={t('place.conditions')} icon={Radio} footer={t('updates.unverified')}>
+    <InfoBlock title={t('place.conditions')} aside={<span className="caption">{t('updates.unverified')}</span>}>
       {updates.length ? (
         <ul className="space-y-2">
           {updates.map((u) => (
-            <li key={u._id} className="flex items-start justify-between gap-3 rounded-xl bg-sand-100 p-3 text-sm">
+            <li key={u._id} className="flex items-start justify-between gap-3 border-b border-line py-3 text-sm last:border-0">
               <div>
                 <p className="font-medium">
                   {t(`updates.kinds.${u.kind}`)}: {t(`levels.${u.level}`)}
@@ -171,6 +171,6 @@ export function CommunityUpdates({ targetType, target, initial = [] }) {
           <Button type="submit" size="sm" className="h-auto" loading={mutation.isPending}>{t('updates.add')}</Button>
         </form>
       )}
-    </Panel>
+    </InfoBlock>
   );
 }

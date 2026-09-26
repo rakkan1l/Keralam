@@ -10,8 +10,8 @@ export default function NotFound() {
     <div className="container-page grid min-h-[60vh] place-items-center py-12 text-center">
       <Seo title={t('notFound.title')} noindex />
       <div>
-        <SceneArt scene="backwater" seed="404" className="mx-auto h-40 w-64 rounded-3xl" />
-        <h1 className="mt-6 text-3xl">{t('notFound.title')}</h1>
+        <SceneArt scene="backwater" seed="404" className="mx-auto h-44 w-72 rounded-[var(--radius-panel)]" />
+        <h1 className="h1 mt-8">{t('notFound.title')}</h1>
         <p className="mt-2 text-muted">{t('notFound.body')}</p>
         <div className="mt-6 flex justify-center gap-2">
           <Button to="/">{t('notFound.home')}</Button>

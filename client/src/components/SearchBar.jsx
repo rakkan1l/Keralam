@@ -100,7 +100,7 @@ export default function SearchBar({ size = 'lg', initial = '', autoFocus = false
         </button>
       </form>
       {open && suggestions.length > 0 && (
-        <ul id={listId} role="listbox" className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-2xl bg-white py-2 shadow-[var(--shadow-lift)] ring-1 ring-sand-300">
+        <ul id={listId} role="listbox" className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-2xl border border-line bg-white py-2 text-left shadow-[var(--shadow-overlay)]">
           {suggestions.map((s, i) => {
             const Icon = TYPE_ICON[s.type] || MapPin;
             return (

@@ -54,15 +54,15 @@ export default function TripView() {
   });
 
   if (isLoading || (!trip && !error)) return <PageLoader />;
-  if (error) return <div className="container-page py-10"><ErrorState error={error} onRetry={refetch} /></div>;
+  if (error) return <div className="container-page py-16"><ErrorState error={error} onRetry={refetch} /></div>;
   const dirty = JSON.stringify(toSavePayload(trip)) !== JSON.stringify(toSavePayload(data));
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16">
       <Seo title={trip.title} noindex />
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-5 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between sm:pt-14">
         <div>
           <label htmlFor="title" className="sr-only">Title</label>
-          <input id="title" value={trip.title} onChange={(e) => setTrip({ ...trip, title: e.target.value })} className="w-full bg-transparent font-display text-3xl text-forest-950 focus:outline-none" />
+          <input id="title" value={trip.title} onChange={(e) => setTrip({ ...trip, title: e.target.value })} className="h1 w-full bg-transparent focus:outline-none" />
           <div className="mt-1 flex gap-2">
             <Badge tone={trip.generator === 'ai' ? 'green' : 'amber'}>{trip.generator === 'ai' ? t('trip.aiMode') : t('trip.demoMode')}</Badge>
             {data.isPublic && <Badge tone="blue">{t('saved.public')}</Badge>}
@@ -71,8 +71,8 @@ export default function TripView() {
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => save.mutate()} disabled={!dirty} loading={save.isPending}><Save className="size-4" aria-hidden />{t('account.saveChanges')}</Button>
           <Button variant="secondary" onClick={() => share.mutate(true)} loading={share.isPending}><Share2 className="size-4" aria-hidden />{t('trip.shareTrip')}</Button>
-          {data.isPublic && <Button variant="ghost" onClick={() => share.mutate(false)}><Link2Off className="size-4" aria-hidden /></Button>}
-          <Button variant="ghost" onClick={() => window.confirm('Delete this trip?') && remove.mutate()} aria-label="Delete trip"><Trash2 className="size-4 text-laterite-600" aria-hidden /></Button>
+          {data.isPublic && <Button variant="ghost" onClick={() => share.mutate(false)} aria-label={t('trip.stopSharing')} title={t('trip.stopSharing')}><Link2Off className="size-4" aria-hidden /></Button>}
+          <Button variant="ghost" onClick={() => window.confirm(t('trip.confirmDelete')) && remove.mutate()} aria-label={t('trip.deleteTrip')}><Trash2 className="size-4 text-laterite-600" aria-hidden /></Button>
         </div>
       </div>
       <TripItinerary trip={trip} onChange={setTrip} />

@@ -6,6 +6,7 @@ import { cx } from '../../utils/format';
 export default function Carousel({ children, itemClass = 'w-[78%] sm:w-[46%] lg:w-[31.5%]', label, dark = false }) {
   const ref = useRef(null);
   const scroll = (dir) => ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.8, behavior: 'smooth' });
+  const count = [children].flat().filter(Boolean).length;
   const btn = cx('grid size-10 place-items-center rounded-full border transition', dark ? 'border-white/25 text-white hover:bg-white/10' : 'border-line bg-white text-ink hover:border-forest-300');
   return (
     <div role="region" aria-roledescription="carousel" aria-label={label}>
@@ -14,7 +15,7 @@ export default function Carousel({ children, itemClass = 'w-[78%] sm:w-[46%] lg:
           <div key={child?.key ?? i} className={cx('shrink-0 snap-start', itemClass)}>{child}</div>
         ))}
       </div>
-      <div className="mt-5 hidden justify-end gap-2 sm:flex">
+      <div className={cx('mt-5 hidden justify-end gap-2', count > 3 && 'sm:flex')}>
         <button type="button" className={btn} onClick={() => scroll(-1)} aria-label="Previous"><ChevronLeft className="size-4" /></button>
         <button type="button" className={btn} onClick={() => scroll(1)} aria-label="Next"><ChevronRight className="size-4" /></button>
       </div>

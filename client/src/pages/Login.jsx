@@ -30,10 +30,10 @@ export default function Login() {
     }
   };
   return (
-    <div className="container-page grid min-h-[70vh] place-items-center py-10">
+    <div className="container-page grid min-h-[75vh] place-items-center py-14">
       <Seo title={t('nav.login')} noindex />
-      <div className="card w-full max-w-md p-7">
-        <h1 className="text-2xl">{t('auth.signInTitle')}</h1>
+      <div className="panel w-full max-w-md sm:p-10">
+        <h1 className="h1 text-[2rem]">{t('auth.signInTitle')}</h1>
         <p className="mt-1 text-sm text-muted">{t('auth.signInSub')}</p>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
           <div>
@@ -47,7 +47,7 @@ export default function Login() {
             {errors.password && <p className="mt-1 text-xs text-laterite-700">{errors.password.message}</p>}
           </div>
           {errors.root && <p role="alert" className="rounded-xl bg-laterite-50 p-3 text-sm text-laterite-700">{errors.root.message}</p>}
-          <Button type="submit" className="w-full" loading={isSubmitting}>{t('nav.login')}</Button>
+          <Button type="submit" size="lg" className="w-full" loading={isSubmitting}>{t('nav.login')}</Button>
         </form>
         <p className="mt-5 text-center text-sm text-muted">
           {t('auth.noAccount')} <Link to={`/register${params.get('next') ? `?next=${encodeURIComponent(params.get('next'))}` : ''}`} className="font-medium text-forest-700 hover:underline">{t('nav.register')}</Link>

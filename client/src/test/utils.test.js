@@ -60,3 +60,13 @@ describe('trip save payload', () => {
     expect(p.title).toBe('Day trip');
   });
 });
+
+import { monthsLabel } from '../pages/PlaceDetail';
+describe('best months label', () => {
+  it('handles seasons that wrap the year end', () => {
+    expect(monthsLabel([10, 11, 12, 1, 2, 3])).toBe('Oct – Mar');
+    expect(monthsLabel([3, 4, 5])).toBe('Mar – May');
+    expect(monthsLabel([1, 5])).toBe('Jan, May');
+    expect(monthsLabel([])).toBeNull();
+  });
+});

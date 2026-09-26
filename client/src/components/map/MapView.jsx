@@ -44,7 +44,7 @@ function FitBounds({ points, route }) {
 export default function MapView({ markers = [], route, user, className = 'h-80', zoom = 7, onMarkerClick }) {
   const points = useMemo(() => markers.filter((m) => Number.isFinite(m.lat) && Number.isFinite(m.lng)), [markers]);
   return (
-    <div className={`overflow-hidden rounded-[var(--radius-card)] ring-1 ring-sand-300 ${className}`}>
+    <div className={`overflow-hidden rounded-[var(--radius-card)] bg-sand-200 ${className}`}>
       <MapContainer center={KERALA_CENTER} zoom={zoom} scrollWheelZoom={false} className="h-full w-full" attributionControl>
         <TileLayer url={TILE_URL} attribution={ATTRIBUTION} />
         {points.map((m) => (

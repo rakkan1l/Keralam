@@ -5,10 +5,10 @@ import { LocateFixed, X } from 'lucide-react';
 import { endpoints } from '../services/api';
 import { useDebounce } from '../hooks/useDebounce';
 import { useUserLocation } from '../context/LocationContext';
-import { districtName } from '../utils/format';
+import { districtName, cx } from '../utils/format';
 
 /** Choose a point by searching places/districts or using the device location. */
-export default function PointInput({ id, label, value, onChange, allowGps = false }) {
+export default function PointInput({ id, label, value, onChange, allowGps = false, dot }) {
   const { t, i18n } = useTranslation();
   const { request, status } = useUserLocation();
   const [text, setText] = useState('');
@@ -36,41 +36,44 @@ export default function PointInput({ id, label, value, onChange, allowGps = fals
   return (
     <div className="relative">
       <label className="label" htmlFor={id}>{label}</label>
-      {value ? (
-        <div className="flex h-11 items-center justify-between rounded-xl bg-forest-50 px-3.5 text-sm ring-1 ring-forest-200">
-          <span className="truncate font-medium text-forest-900">{value.label}</span>
-          <button type="button" onClick={() => onChange(null)} className="rounded-full p-1 hover:bg-white" aria-label={t('common.clear')}>
-            <X className="size-4" />
-          </button>
-        </div>
-      ) : (
-        <div className="flex gap-2">
-          <input id={id} className="input" placeholder={t('directions.choosePlace')} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" />
-          {allowGps && (
-            <button
-              type="button"
-              onClick={async () => {
-                try {
-                  const p = await request();
-                  onChange({ lat: p.lat, lng: p.lng, label: t('directions.useLocation') });
-                } catch {
-                  /* denied — status shown by caller */
-                }
-              }}
-              className="grid size-11 shrink-0 place-items-center rounded-xl bg-white ring-1 ring-sand-300 hover:ring-forest-300"
-              aria-label={t('directions.useLocation')}
-              title={t('directions.useLocation')}
-            >
-              <LocateFixed className={status === 'locating' ? 'size-4 animate-pulse' : 'size-4'} />
+      <div className="relative">
+        {dot && <span className={cx('absolute top-1/2 left-3.5 z-10 size-2.5 -translate-y-1/2 rounded-full', dot)} aria-hidden />}
+        {value ? (
+          <div className={cx('flex h-11 items-center justify-between rounded-[10px] border border-forest-200 bg-forest-50 pr-2 text-[15px]', dot ? 'pl-9' : 'pl-3.5')}>
+            <span className="truncate font-medium text-ink">{value.label}</span>
+            <button type="button" onClick={() => onChange(null)} className="grid size-8 place-items-center rounded-full hover:bg-white" aria-label={`${t('common.clear')} ${label}`}>
+              <X className="size-4" />
             </button>
-          )}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input id={id} className={cx('input', dot && 'pl-9')} placeholder={t('directions.choosePlace')} value={text} onChange={(e) => setText(e.target.value)} autoComplete="off" />
+            {allowGps && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const p = await request();
+                    onChange({ lat: p.lat, lng: p.lng, label: t('directions.useLocation') });
+                  } catch {
+                    /* denied — handled by caller */
+                  }
+                }}
+                className="grid size-11 shrink-0 place-items-center rounded-[10px] border border-line bg-white hover:border-forest-300"
+                aria-label={t('directions.useLocation')}
+                title={t('directions.useLocation')}
+              >
+                <LocateFixed className={cx('size-4', status === 'locating' && 'animate-pulse')} />
+              </button>
+            )}
+          </div>
+        )}
+      </div>
       {!value && options.length > 0 && text && (
-        <ul className="absolute inset-x-0 top-full z-30 mt-1 max-h-64 overflow-y-auto rounded-xl bg-white py-1 shadow-[var(--shadow-lift)] ring-1 ring-sand-300">
+        <ul className="absolute inset-x-0 top-full z-30 mt-1 max-h-64 overflow-y-auto rounded-xl border border-line bg-white py-1 shadow-[var(--shadow-overlay)]">
           {options.map((s) => (
             <li key={`${s.type}${s.slug}`}>
-              <button type="button" onClick={() => pick(s)} className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-forest-50">
+              <button type="button" onClick={() => pick(s)} className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-sm hover:bg-sand-100">
                 <span>{s.type === 'district' ? districtName(s.slug, i18n.language) : s.label}</span>
                 {s.district && <span className="text-xs text-muted">{districtName(s.district, i18n.language)}</span>}
               </button>

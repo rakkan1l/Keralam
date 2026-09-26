@@ -43,25 +43,25 @@ export default function ListDetail() {
   const del = useMutation({ mutationFn: () => endpoints.deleteList(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['me', 'lists'] }); navigate('/saved?tab=lists'); } });
 
   if (isLoading) return <PageLoader />;
-  if (error) return <div className="container-page py-10"><ErrorState error={error} onRetry={refetch} /></div>;
+  if (error) return <div className="container-page py-16"><ErrorState error={error} onRetry={refetch} /></div>;
   const inList = new Set(list.items.map((i) => `${i.targetType}:${i.targetId}`));
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-20">
       <Seo title={list.name} noindex />
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl">{list.name}</h1>
+      <div className="flex flex-col gap-5 pt-10 pb-8 sm:flex-row sm:items-end sm:justify-between sm:pt-14">
+        <h1 className="h1">{list.name}</h1>
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => setAdding(true)}><Plus className="size-4" aria-hidden />{t('saved.addToList')}</Button>
           <Button variant="secondary" onClick={() => togglePublic.mutate()}><Share2 className="size-4" aria-hidden />{list.isPublic ? t('common.copyLink') : t('common.share')}</Button>
-          <Button variant="ghost" onClick={() => window.confirm('Delete this list?') && del.mutate()} aria-label="Delete list"><Trash2 className="size-4 text-laterite-600" /></Button>
+          <Button variant="ghost" onClick={() => window.confirm(t('saved.confirmDeleteList')) && del.mutate()} aria-label={t('saved.deleteList')}><Trash2 className="size-4 text-laterite-600" /></Button>
         </div>
       </div>
       {list.items.length ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
           {list.items.map((i) => (
             <div key={`${i.targetType}${i.targetId}`} className="relative">
               <AnyCard type={i.targetType} item={i.item} />
-              <button type="button" onClick={() => removeItem.mutate(i)} className="absolute bottom-3 right-3 z-10 rounded-full bg-white p-2 shadow ring-1 ring-sand-300" aria-label={t('trip.remove')}>
+              <button type="button" onClick={() => removeItem.mutate(i)} className="absolute top-3 left-3 z-20 grid size-9 place-items-center rounded-full bg-white/90 text-laterite-600 shadow-[var(--shadow-soft)]" aria-label={t('trip.remove')}>
                 <Trash2 className="size-4 text-laterite-600" />
               </button>
             </div>
@@ -74,7 +74,7 @@ export default function ListDetail() {
         {saved.isLoading ? (
           <p className="text-sm text-muted">{t('common.loading')}</p>
         ) : saved.data?.length ? (
-          <ul className="divide-y divide-sand-200">
+          <ul className="divide-y divide-line">
             {saved.data.map((s) => (
               <li key={`${s.targetType}${s.targetId}`} className="flex items-center justify-between gap-3 py-2.5">
                 <span className="text-sm">{s.item.name || s.item.title}</span>

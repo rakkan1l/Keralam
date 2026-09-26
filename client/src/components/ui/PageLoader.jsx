@@ -7,3 +7,13 @@ export function PageLoader() {
     </div>
   );
 }
+
+/** Loading / error fallback for pages whose header floats over a hero image. */
+export function DetailFallback({ error, onRetry, ErrorComponent }) {
+  return (
+    <div>
+      <div className="h-[46vh] min-h-72 animate-pulse bg-forest-900" />
+      <div className="container-page py-12">{error && ErrorComponent ? <ErrorComponent error={error} onRetry={onRetry} /> : <PageLoader />}</div>
+    </div>
+  );
+}

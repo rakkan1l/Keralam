@@ -21,8 +21,8 @@ export default function Assistant() {
   });
   const res = ask.data;
   return (
-    <section className="card p-5 sm:p-6" aria-labelledby="assistant-title">
-      <h2 id="assistant-title" className="flex items-center gap-2 text-xl"><MessageCircle className="size-5 text-forest-600" aria-hidden />{t('trip.assistant')}</h2>
+    <section className="panel" aria-labelledby="assistant-title">
+      <h2 id="assistant-title" className="h2 flex items-center gap-2.5"><MessageCircle className="size-5 text-forest-600" aria-hidden />{t('trip.assistant')}</h2>
       <p className="mt-1 text-sm text-muted">{t('trip.assistantPreview')}</p>
       <form
         className="mt-4 flex gap-2"
@@ -44,9 +44,9 @@ export default function Assistant() {
           </div>
           <p className="whitespace-pre-line text-sm leading-relaxed">{res.answer}</p>
           {res.missingInformation?.length > 0 && <p className="text-xs text-muted">{t('common.notAvailable')}: {res.missingInformation.join('; ')}</p>}
-          <ul className="divide-y divide-sand-200 rounded-2xl ring-1 ring-sand-200">
+          <ul className="divide-y divide-line border-y border-line">
             {res.sources.places.map((p) => (
-              <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+              <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
                 <span>
                   <Link to={`/places/${p.slug}`} className="font-medium text-forest-800 hover:underline">{p.name}</Link>
                   <span className="text-muted"> · {districtName(p.district, i18n.language)}{p.distanceKmFromStart ? ` · ${p.distanceKmFromStart} km` : ''}</span>

@@ -53,7 +53,7 @@ const Palm = ({ x, y, s = 1, c = '#16271f', lean = 0 }) => (
   </g>
 );
 
-function Layers({ scene, L, u, h }) {
+function Layers({ scene, u, h }) {
   const v = (h % 60) - 30;
   switch (scene) {
     case 'beach':
@@ -230,7 +230,7 @@ export default function SceneArt({ scene = 'hills', seed = '', className = '', l
           <path d="M0 230 Q200 200 400 226 T800 214 V300 H0Z" fill={L.haze} opacity=".7" />
         </>
       )}
-      <Layers scene={scene} L={L} u={u} h={h} />
+      <Layers scene={scene} u={u} h={h} />
       <rect width="800" height="520" filter={`url(#grain${u})`} opacity=".14" />
     </svg>
   );

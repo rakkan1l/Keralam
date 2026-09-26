@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import Seo from '../components/Seo';
 import Chips from '../components/ui/Chips';
 import Pagination from '../components/ui/Pagination';
-import { EventCard } from '../components/cards/Cards';
+import { PageIntro } from '../components/ui/Section';
+import { EventCard, CARD_GRID } from '../components/cards/Cards';
 import { GridSkeleton } from '../components/ui/Skeleton';
 import { EmptyState, ErrorState } from '../components/ui/States';
-import { DistrictSelect, Toggle } from '../components/FilterPanel';
-import { useQueryParams, listParam } from '../hooks/useQueryParams';
+import { DistrictSelect, SelectChip, FilterBar, ResultsMeta } from '../components/FilterPanel';
+import { useQueryParams } from '../hooks/useQueryParams';
 import { endpoints } from '../services/api';
 import { EVENT_CATEGORIES, EVENT_WINDOWS } from '../utils/constants';
 import { cx } from '../utils/format';
@@ -19,38 +20,36 @@ export default function Events() {
   const query = { when, district: params.district, category: params.category, free: params.free, page: params.page, limit: 12 };
   const { data, isLoading, error, refetch } = useQuery({ queryKey: ['events', query], queryFn: () => endpoints.events(query), placeholderData: keepPreviousData });
   return (
-    <div className="container-page py-8">
+    <div className="container-page pb-16">
       <Seo title={t('events.title')} description={t('events.subtitle')} />
-      <h1 className="text-3xl sm:text-4xl">{t('events.title')}</h1>
-      <p className="mt-2 max-w-2xl text-muted">{t('events.subtitle')}</p>
-
-      <div className="mt-6 flex gap-2 overflow-x-auto pb-1" role="tablist">
-        {EVENT_WINDOWS.map((w) => (
-          <button key={w} role="tab" aria-selected={when === w} type="button" onClick={() => set({ when: w === 'upcoming' ? '' : w })} className={cx('chip shrink-0', when === w && 'chip-active')}>
-            {t(`events.${w}`)}
-          </button>
-        ))}
-      </div>
-      <div className="mt-4 flex flex-wrap items-center gap-4">
-        <div className="w-56"><DistrictSelect value={params.district} onChange={(v) => set({ district: v })} /></div>
-        <div className="w-44"><Toggle label={t('common.free')} checked={params.free === 'true'} onChange={(v) => set({ free: v ? 'true' : '' })} /></div>
-      </div>
-      <Chips className="mt-4" options={EVENT_CATEGORIES} value={listParam(params.category)} multiple onChange={(v) => set({ category: v })} labelFor={(c) => t(`eventCategories.${c}`)} ariaLabel={t('common.category')} />
-
-      <div className="mt-6">
-        {error ? (
-          <ErrorState error={error} onRetry={refetch} />
-        ) : isLoading ? (
-          <GridSkeleton />
-        ) : data.data.length ? (
-          <>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{data.data.map((e) => <EventCard key={e._id} event={e} />)}</div>
-            <Pagination meta={data.meta} onPage={(page) => set({ page }, { resetPage: false })} />
-          </>
-        ) : (
-          <EmptyState />
-        )}
-      </div>
+      <PageIntro eyebrow={t('nav.events')} title={t('events.title')} subtitle={t('events.subtitle')} />
+      <FilterBar>
+        <div className="scroll-row mb-3 gap-2 pb-1" role="tablist">
+          {EVENT_WINDOWS.map((w) => (
+            <button key={w} role="tab" aria-selected={when === w} type="button" onClick={() => set({ when: w === 'upcoming' ? '' : w })} className={cx('chip shrink-0', when === w && 'chip-active')}>
+              {t(`events.${w}`)}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <DistrictSelect chip value={params.district} onChange={(v) => set({ district: v })} />
+          <SelectChip value={params.category} onChange={(v) => set({ category: v })} placeholder={t('common.category')} options={EVENT_CATEGORIES.map((c) => [c, t(`eventCategories.${c}`)])} />
+          <button type="button" onClick={() => set({ free: params.free === 'true' ? '' : 'true' })} aria-pressed={params.free === 'true'} className={cx('chip', params.free === 'true' && 'chip-active')}>{t('common.free')}</button>
+        </div>
+      </FilterBar>
+      <ResultsMeta total={data?.meta?.total} />
+      {error ? (
+        <ErrorState error={error} onRetry={refetch} />
+      ) : isLoading ? (
+        <GridSkeleton className={CARD_GRID} />
+      ) : data.data.length ? (
+        <>
+          <div className={CARD_GRID}>{data.data.map((e) => <EventCard key={e._id} event={e} />)}</div>
+          <Pagination meta={data.meta} onPage={(page) => set({ page }, { resetPage: false })} />
+        </>
+      ) : (
+        <EmptyState />
+      )}
     </div>
   );
 }
