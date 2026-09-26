@@ -97,6 +97,7 @@ export function placeFacts(p) {
   const hasHours = p.openingHours && ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].some((d) => Array.isArray(p.openingHours[d]) && p.openingHours[d].length);
   return {
     id: String(p._id),
+    slug: p.slug,
     name: p.name,
     district: p.district,
     categories: p.categories,

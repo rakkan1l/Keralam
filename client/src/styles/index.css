@@ -1,0 +1,126 @@
+@import 'tailwindcss';
+@import 'leaflet/dist/leaflet.css';
+
+/*
+ * Design tokens — a restrained, nature-inspired palette:
+ *   forest (deep green, primary), sand (natural off-white surfaces),
+ *   laterite (terracotta accent for calls to action), turmeric (small highlights),
+ *   lagoon (info/water accents). Contrast pairs used for text meet WCAG AA.
+ */
+@theme {
+  --font-sans: 'Inter', 'Noto Sans Malayalam', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', 'Noto Sans Malayalam', Georgia, serif;
+
+  --color-forest-50: #f0f6f2;
+  --color-forest-100: #dcebe1;
+  --color-forest-200: #b9d6c4;
+  --color-forest-300: #8dbba0;
+  --color-forest-400: #5c9a78;
+  --color-forest-500: #3c7d5b;
+  --color-forest-600: #2c6448;
+  --color-forest-700: #24503b;
+  --color-forest-800: #1c4532;
+  --color-forest-900: #143324;
+  --color-forest-950: #0b1f15;
+
+  --color-sand-50: #fdfcf9;
+  --color-sand-100: #faf8f3;
+  --color-sand-200: #f2eee4;
+  --color-sand-300: #e6e0d1;
+  --color-sand-400: #cfc6b2;
+
+  --color-laterite-50: #fbf1ec;
+  --color-laterite-100: #f5ddd0;
+  --color-laterite-500: #c0603a;
+  --color-laterite-600: #a44e2d;
+  --color-laterite-700: #843e24;
+
+  --color-turmeric-100: #fbf0d4;
+  --color-turmeric-400: #e8b04b;
+  --color-turmeric-600: #a87412;
+
+  --color-lagoon-50: #eef6f8;
+  --color-lagoon-500: #2f7f95;
+  --color-lagoon-700: #1f5a6b;
+
+  --color-ink: #1b2420;
+  --color-muted: #5b6660;
+
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 2px rgb(20 51 36 / 0.04), 0 4px 16px rgb(20 51 36 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(20 51 36 / 0.06), 0 12px 32px rgb(20 51 36 / 0.1);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-sand-100 text-ink font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight text-forest-950;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-forest-500;
+  }
+  ::selection {
+    @apply bg-forest-200;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .card {
+    @apply rounded-[var(--radius-card)] bg-white shadow-[var(--shadow-soft)] ring-1 ring-sand-300/60;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-white px-3.5 py-1.5 text-sm font-medium text-forest-900 transition hover:border-forest-300 hover:bg-forest-50;
+  }
+  .chip-active {
+    @apply border-forest-700 bg-forest-800 text-white hover:bg-forest-700 hover:border-forest-700;
+  }
+  .input {
+    @apply w-full rounded-xl border border-sand-300 bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted/70 transition focus:border-forest-500 focus:outline-none focus:ring-2 focus:ring-forest-200;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-forest-950;
+  }
+  .scroll-row {
+    @apply -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0;
+    scrollbar-width: none;
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  border-radius: inherit;
+}
