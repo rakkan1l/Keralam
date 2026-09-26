@@ -60,7 +60,7 @@ export default function NavDrawer({ open, onClose }) {
   };
 
   return (
-    <div className={cx('fixed inset-0 z-[60] overflow-hidden', !open && 'pointer-events-none invisible delay-300')} aria-hidden={!open}>
+    <div className={cx('fixed inset-0 z-[60] overflow-hidden', !open && 'pointer-events-none invisible delay-300')} aria-hidden={!open} role="dialog" aria-modal="true" aria-label={t('nav.menu')}>
       <div className={cx('absolute inset-0 bg-forest-950/35 backdrop-blur-[2px] transition-opacity duration-300', open ? 'opacity-100' : 'opacity-0')} onClick={onClose} />
       <nav
         ref={panel}

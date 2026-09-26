@@ -14,7 +14,7 @@ Delivered early from Phase 2 because they were cheap on top of the MVP data mode
 
 ```
 main.jsx → App (QueryClientProvider → BrowserRouter → Toast → Auth → Saved → Location)
-         → AppRoutes (lazy pages) → MainLayout (Navbar, BottomNav, SOS button, Footer) | AdminApp
+         → AppRoutes (lazy pages) → MainLayout (Header + NavDrawer + SearchOverlay, Footer) | AdminApp
 ```
 
 - **Routing:** React Router 7; every page except Home is `lazy()` loaded; the admin CMS is its own chunk; Leaflet is a separate `maps` chunk loaded only when a map renders.

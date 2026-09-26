@@ -212,7 +212,7 @@ export default function ResourceForm({ config, doc, onSubmit, submitting }) {
     <form onSubmit={submit} className="space-y-5" noValidate>
       <div className="grid gap-x-6 gap-y-4 md:grid-cols-2">
         {config.fields.map((f, idx) => {
-          if (f.type === 'section') return <h3 key={`s${idx}`} className="border-b border-sand-200 pb-1 pt-4 font-sans text-sm font-semibold uppercase tracking-wide text-forest-700 md:col-span-2">{f.label}</h3>;
+          if (f.type === 'section') return <h3 key={`s${idx}`} className="border-b border-line pt-6 pb-2 text-sm font-semibold text-ink md:col-span-2">{f.label}</h3>;
           const id = fieldId(f.name);
           const wide = ['textarea', 'images', 'links', 'sources', 'hours', 'multi', 'point'].includes(f.type);
           const labelEl = (
@@ -282,7 +282,7 @@ export default function ResourceForm({ config, doc, onSubmit, submitting }) {
               break;
             case 'hours':
               input = (
-                <div className="rounded-xl bg-sand-50 p-3 ring-1 ring-sand-200">
+                <div className="rounded-xl border border-line bg-sand-50 p-3">
                   <p className="mb-2 text-xs text-muted">Per day: “09:00-17:00, 18:00-21:00”, “closed”, or leave blank for unknown.</p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {DAYS.map((d) => (
@@ -313,7 +313,7 @@ export default function ResourceForm({ config, doc, onSubmit, submitting }) {
           );
         })}
       </div>
-      <div className="sticky bottom-0 -mx-6 flex justify-end gap-2 border-t border-sand-200 bg-white/95 px-6 py-3 backdrop-blur">
+      <div className="sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-2 rounded-b-xl border-t border-line bg-white/95 px-6 py-3 backdrop-blur">
         <Button type="submit" loading={submitting}>Save</Button>
       </div>
     </form>

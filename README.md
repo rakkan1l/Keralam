@@ -15,7 +15,8 @@ The app is built so that **nothing unverified is presented as verified**: every 
 
 | Area | What works |
 |---|---|
-| **Home** | Hero with smart search + suggestions, Explore / Near Me / Build-my-trip actions, trending (places, cafés, events, in-season), hidden gems, categories, 14 districts, weekend getaways, Kerala food, events this week, stays, explore by mood and by time, tourist-help banner |
+| **Navigation** | Compact header (logo · search · emergency · account · menu). One hamburger drawer groups every section — Explore, Travel, Discover more, Personal, Help — with focus trap, Esc / outside-click / link-click to close, and the language switch. Full-screen search overlay with suggestions. Minimal footer with about, contact, privacy, terms and language |
+| **Home** | Editorial hero ("Discover Kerala, Your Way.") with search and two actions, featured destinations, categories, hidden gems, trending carousel, compact districts, Kerala food, upcoming events |
 | **Explore** | Filters by district, category, mood, time available, budget, season, hidden gems, family, wheelchair access, low crowds, rainy-day; sort by popularity/rating/name/newest/distance; list ⇄ map view; URL-backed (shareable) filters; pagination |
 | **Destination pages** | Description, plan-your-visit (duration, fee, best months, hours), safety panel with tri-state facts + official notices (source + last updated), accessibility panel (confirmed vs unknown), hidden-gem access details, weather (when configured), map, directions, save/share, community updates, reviews, report incorrect info, nearby places/food/stays, schema.org JSON-LD |
 | **Districts** | 14 district pages from one template: intro, popular attractions, hidden gems, local dishes, restaurants, upcoming events, stays, transport hubs, essential services, neighbouring districts, district map |
@@ -30,7 +31,7 @@ The app is built so that **nothing unverified is presented as verified**: every 
 | **Directions** | Start/destination (search or GPS), route distance & time (OSRM when configured, clearly labelled straight-line estimate otherwise — no fabricated traffic), along-the-way stops (viewpoints, food, tea, fuel, EV, toilets, hospitals, attractions, rest areas), add stops and re-plan, open in Google Maps / OpenStreetMap |
 | **AI Trip Builder** | All inputs from the brief; itinerary with day timeline, route order, meals, stays, travel distance/time, known costs vs unavailable costs, opening-hour conflicts, rainy-day alternatives, seasonal & safety notes; edit (reorder/remove), save, share. Works **without an AI key** (labelled demo planner). With `ANTHROPIC_API_KEY`, Claude only selects and orders database records by id — facts always come from the DB |
 | **Travel assistant (preview)** | RAG-ready service: retrieval from the DB with verified/estimated/unavailable labels; AI phrasing only when configured |
-| **Help & emergency** | One-tap emergency call, admin-managed helpline numbers with verification badges and sources, nearby hospitals/pharmacies/police, share-my-location (native share / WhatsApp / SMS / trusted contacts), active advisories, safety tips; SOS button always visible on mobile |
+| **Help & emergency** | One-tap emergency call, admin-managed helpline numbers with verification badges and sources, nearby hospitals/pharmacies/police, share-my-location (native share / WhatsApp / SMS / trusted contacts), active advisories, safety tips; emergency shortcut always in the header |
 | **Accounts** | Register, login, logout (httpOnly JWT cookie), profile & settings, language preference, trusted contacts, change password; guest browsing with device-local saves that sync on sign-in |
 | **Saved** | Saved places/listings/stays/events/dishes, custom lists (public share links), saved trips, recently viewed |
 | **Community** | Reviews (moderated), live crowd/parking/road/condition updates (labelled unverified, auto-expire in 24 h), reports (incorrect info, duplicate, closure, safety) |
@@ -151,7 +152,7 @@ Vite proxies `/api` to the server in development, so the auth cookie is same-ori
 - **Restaurants, cafés, shops, theatres, parks, essential services, stays, events and route stops are fictional** ("Sample … — District") and flagged `isDemo: true`, which the UI shows as a *Demo content* badge. Sample service pins carry no phone numbers.
 - **Emergency numbers** are widely published national numbers stored with `verified: false`. An admin must confirm each against the official source and tick *verified* (Admin → Emergency contacts); until then the UI shows *Pending verification*.
 - **District intros** are marked demo/unverified text.
-- No photos are bundled; listings without images render illustrated scene art. Add images in the CMS by URL or via Cloudinary upload.
+- No photos are bundled. The layout is photo-first; listings without images render illustrated scene art in the same frames. Add images in the CMS by URL or via Cloudinary upload.
 
 Replace demo content with verified records before any public launch.
 
@@ -185,6 +186,7 @@ Replace demo content with verified records before any public launch.
 | `VITE_API_URL` | API origin when not same-origin (leave empty with the dev proxy or when the server serves the client) |
 | `VITE_SITE_URL` | Canonical/OG base URL |
 | `VITE_MAP_TILE_URL`, `VITE_MAP_ATTRIBUTION` | Map tile provider (respect the OSM tile usage policy in production) |
+| `VITE_HERO_IMAGE` | Optional photo URL for the home hero (an illustrated scene is shown when unset) |
 
 Only `VITE_*` values reach the browser — never put secrets there.
 

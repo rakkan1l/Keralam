@@ -189,7 +189,7 @@ export default function TripBuilder() {
       <PageIntro eyebrow={t('nav.aiPlanner')} title={t('trip.title')} subtitle={t('trip.subtitle')} />
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
-        <form onSubmit={handleSubmit((v) => generate.mutate(v))} className="panel" noValidate>
+        <form onSubmit={last ? handleSubmit((v) => generate.mutate(v)) : (e) => { e.preventDefault(); next(); }} className="panel" noValidate>
           <div className="mb-8">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium">{t(`trip.steps.${stepKey}`)}</span>
@@ -274,9 +274,9 @@ export default function TripBuilder() {
           <div className="mt-10 flex items-center justify-between border-t border-line pt-6">
             <Button variant="ghost" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0}><ArrowLeft className="size-4" aria-hidden />{t('common.back')}</Button>
             {last ? (
-              <Button type="submit" size="lg" loading={generate.isPending}><Sparkles className="size-4" aria-hidden />{generate.isPending ? t('trip.generating') : t('trip.generate')}</Button>
+              <Button key="submit" type="submit" size="lg" loading={generate.isPending}><Sparkles className="size-4" aria-hidden />{generate.isPending ? t('trip.generating') : t('trip.generate')}</Button>
             ) : (
-              <Button onClick={next}>{t('common.next')}<ArrowRight className="size-4" aria-hidden /></Button>
+              <Button key="next" onClick={next}>{t('common.next')}<ArrowRight className="size-4" aria-hidden /></Button>
             )}
           </div>
         </form>

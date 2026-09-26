@@ -38,7 +38,7 @@ export function Overview() {
             <Stat label="Searches (7 days)" value={d.searchActivity.last7Days} hint={`${d.searchActivity.zeroResultLast7Days} returned no results`} />
           </div>
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
-            <div className="card p-5">
+            <div className="rounded-xl border border-line bg-white p-5">
               <h2 className="mb-3 font-sans text-base font-semibold">Destinations by status</h2>
               <ul className="space-y-2 text-sm">
                 {Object.entries(d.statusBreakdown).map(([s, n]) => (
@@ -46,9 +46,9 @@ export function Overview() {
                 ))}
               </ul>
             </div>
-            <div className="card p-5">
-              <div className="mb-3 flex items-center justify-between"><h2 className="font-sans text-base font-semibold">Recent reports</h2><Link to="/admin/reports" className="text-sm text-forest-700 hover:underline">All reports</Link></div>
-              <ul className="divide-y divide-sand-200 text-sm">
+            <div className="rounded-xl border border-line bg-white p-5">
+              <div className="mb-3 flex items-center justify-between"><h2 className="text-sm font-semibold">Recent reports</h2><Link to="/admin/reports" className="text-sm text-forest-700 hover:underline">All reports</Link></div>
+              <ul className="divide-y divide-line text-sm">
                 {d.recentReports.map((r) => (
                   <li key={r._id} className="flex items-start justify-between gap-3 py-2">
                     <span><strong>{r.kind}</strong> · {r.targetName || '—'}<br /><span className="text-muted">{r.message.slice(0, 90)}</span></span>
@@ -79,7 +79,7 @@ export function Reports() {
   return (
     <div>
       <PageHeader title="Reports" subtitle="Incorrect information, duplicates, closures and safety reports from users." actions={
-        <select className="input w-44" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
+        <select className="input h-9 w-44 text-sm" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
           {['', 'open', 'in_review', 'resolved', 'dismissed'].map((s) => <option key={s} value={s}>{s || 'All'}</option>)}
         </select>
       } />
@@ -122,8 +122,8 @@ export function Moderation() {
     <div>
       <PageHeader title="Community moderation" subtitle="Approve reviews before they appear. Community updates publish immediately (labelled unverified) and can be hidden here." />
       <div className="mb-4 flex flex-wrap gap-2">
-        {[['reviews', 'Reviews'], ['community-updates', 'Community updates']].map(([k, l]) => <button key={k} type="button" className={cx('chip', tab === k && 'chip-active')} onClick={() => { setTab(k); setStatus(k === 'reviews' ? 'pending' : 'approved'); }}>{l}</button>)}
-        <select className="input w-40" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
+        {[['reviews', 'Reviews'], ['community-updates', 'Community updates']].map(([k, l]) => <button key={k} type="button" className={cx('chip h-8', tab === k && 'chip-active')} onClick={() => { setTab(k); setStatus(k === 'reviews' ? 'pending' : 'approved'); }}>{l}</button>)}
+        <select className="input h-9 w-40 text-sm" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Status">
           {['pending', 'approved', 'rejected'].map((s) => <option key={s}>{s}</option>)}
         </select>
       </div>
@@ -169,7 +169,7 @@ export function Trending() {
   return (
     <div>
       <PageHeader title="Trending & editorial picks" subtitle="Trending = recent views + saves + searches + event interest, plus an editorial boost for featured items and editorial rank. Social-media popularity is not used." />
-      <div className="mb-4 flex gap-2">{['places', 'businesses', 'events', 'stays', 'dishes'].map((r) => <button key={r} type="button" className={cx('chip', resource === r && 'chip-active')} onClick={() => setResource(r)}>{r}</button>)}</div>
+      <div className="mb-4 flex gap-2">{['places', 'businesses', 'events', 'stays', 'dishes'].map((r) => <button key={r} type="button" className={cx('chip h-8 capitalize', resource === r && 'chip-active')} onClick={() => setResource(r)}>{r}</button>)}</div>
       {!isAdmin && <p className="mb-3 text-sm text-muted">Only administrators can change featured items.</p>}
       <Guard q={q}>
         {() => (
@@ -204,7 +204,7 @@ export function UsersPage() {
   });
   return (
     <div>
-      <PageHeader title="Users" subtitle="Roles: user, contributor, editor (content editing), admin (verification, publishing, users)." actions={<input className="input w-64" placeholder="Search name or email" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search users" />} />
+      <PageHeader title="Users" subtitle="Roles: user, contributor, editor (content editing), admin (verification, publishing, users)." actions={<input className="input h-9 w-64 text-sm" placeholder="Search name or email" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search users" />} />
       <Guard q={q}>
         {(d) => (
           <Table
@@ -248,10 +248,10 @@ function DailyBars({ daily, type, days }) {
   const max = Math.max(1, ...values);
   return (
     <div>
-      <div className="flex h-40 items-end gap-[2px] border-b border-sand-300" role="img" aria-label={`Daily ${type} counts`}>
+      <div className="flex h-44 items-end gap-[2px] border-b border-line" role="img" aria-label={`Daily ${type} counts`}>
         {values.map((v, i) => (
           <div key={dates[i]} className="group relative flex h-full flex-1 items-end">
-            <div className="w-full rounded-t-[4px] bg-forest-600 transition-colors group-hover:bg-forest-800" style={{ height: `${(v / max) * 100}%`, minHeight: v ? 2 : 0 }} />
+            <div className="w-full rounded-t-[4px] bg-forest-500 transition-colors group-hover:bg-forest-800" style={{ height: `${(v / max) * 100}%`, minHeight: v ? 2 : 0 }} />
             <span className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-forest-950 px-2 py-1 text-xs text-white group-hover:block">{dates[i]}: {v}</span>
           </div>
         ))}
@@ -268,7 +268,7 @@ export function Analytics() {
   return (
     <div>
       <PageHeader title="Analytics" subtitle="First-party events stored in MongoDB (kept 180 days)." actions={
-        <select className="input w-40" value={days} onChange={(e) => setDays(Number(e.target.value))} aria-label="Range">
+        <select className="input h-9 w-40 text-sm" value={days} onChange={(e) => setDays(Number(e.target.value))} aria-label="Range">
           {[7, 30, 90, 180].map((d) => <option key={d} value={d}>Last {d} days</option>)}
         </select>
       } />
@@ -278,24 +278,24 @@ export function Analytics() {
             <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-6">
               {METRICS.map(([k, l]) => <Stat key={k} label={l} value={d.totals[k] || 0} />)}
             </div>
-            <div className="card p-5">
+            <div className="rounded-xl border border-line bg-white p-5">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <h2 className="font-sans text-base font-semibold">{METRICS.find(([k]) => k === metric)[1]} per day</h2>
+                <h2 className="text-sm font-semibold">{METRICS.find(([k]) => k === metric)[1]} per day</h2>
                 <div className="flex flex-wrap gap-1.5">{METRICS.map(([k, l]) => <button key={k} type="button" className={cx('chip py-1 text-xs', metric === k && 'chip-active')} onClick={() => setMetric(k)}>{l}</button>)}</div>
               </div>
               <DailyBars daily={d.daily} type={metric} days={days} />
             </div>
             <div className="grid gap-6 lg:grid-cols-3">
               <div>
-                <h2 className="mb-2 font-sans text-base font-semibold">Top searches</h2>
+                <h2 className="mb-2 text-sm font-semibold">Top searches</h2>
                 <Table rows={d.topSearches} columns={[{ key: 'query', label: 'Query' }, { key: 'count', label: 'Count' }]} />
               </div>
               <div>
-                <h2 className="mb-2 font-sans text-base font-semibold">Zero-result searches</h2>
+                <h2 className="mb-2 text-sm font-semibold">Zero-result searches</h2>
                 <Table rows={d.zeroResultSearches} columns={[{ key: 'query', label: 'Query' }, { key: 'count', label: 'Count' }]} empty="None — great." />
               </div>
               <div>
-                <h2 className="mb-2 font-sans text-base font-semibold">Most viewed destinations</h2>
+                <h2 className="mb-2 text-sm font-semibold">Most viewed destinations</h2>
                 <Table rows={d.topViewed} columns={[{ key: 'name', label: 'Place', render: (r) => <Link className="hover:underline" to={`/places/${r.slug}`}>{r.name}</Link> }, { key: 'views', label: 'Views' }]} />
               </div>
             </div>
@@ -313,7 +313,7 @@ export function AiKnowledge() {
       {(d) => (
         <div>
           <PageHeader title="AI knowledge management" subtitle="The trip builder and assistant only retrieve published records and approved knowledge notes." actions={<Button to="/admin/r/knowledge">Manage knowledge notes</Button>} />
-          <div className="card mb-6 p-5 text-sm">
+          <div className="mb-6 rounded-xl border border-line bg-white p-5 text-sm">
             <p><strong>Provider:</strong> {d.provider}</p>
             <p className="mt-1 text-muted">Set AI_PROVIDER=anthropic and ANTHROPIC_API_KEY on the server to enable AI planning. Keys never reach the browser.</p>
           </div>

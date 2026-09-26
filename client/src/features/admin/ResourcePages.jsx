@@ -42,7 +42,7 @@ export function ResourceList() {
   const columns = config.columns.map((key) => ({
     key,
     label: key.replace(/([A-Z])/g, ' $1'),
-    render: key === nameField ? (r) => <Link to={`/admin/r/${resource}/${r._id}`} className="font-medium text-forest-800 hover:underline">{r[key]}</Link> : (r) => cell(r, key),
+    render: key === nameField ? (r) => <Link to={`/admin/r/${resource}/${r._id}`} className="font-medium text-ink hover:text-forest-700 hover:underline">{r[key]}</Link> : (r) => cell(r, key),
   }));
   if (config.publicPath) columns.push({ key: '_view', label: '', render: (r) => (r.slug ? <a href={config.publicPath(r)} target="_blank" rel="noreferrer" aria-label="View on site"><ExternalLink className="size-4 text-muted" /></a> : null) });
 
@@ -54,20 +54,20 @@ export function ResourceList() {
         subtitle={config.workflow ? 'New items start as drafts. Admins verify and publish from the edit screen.' : undefined}
         actions={!config.noCreate && canWrite && <Button to={`/admin/r/${resource}/new`}><Plus className="size-4" aria-hidden />New {config.singular}</Button>}
       />
-      <div className="mb-4 flex flex-wrap gap-2">
-        <label className="relative">
+      <div className="mb-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+        <label className="relative col-span-2">
           <span className="sr-only">Search</span>
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
-          <input className="input w-64 pl-9" placeholder="Search…" onChange={(e) => set({ q: e.target.value || undefined })} />
+          <input className="input h-9 w-full pl-9 text-sm sm:w-64" placeholder="Search…" onChange={(e) => set({ q: e.target.value || undefined })} />
         </label>
         {config.workflow && (
-          <select className="input w-52" aria-label="Status" onChange={(e) => set({ status: e.target.value || undefined })}>
+          <select className="input h-9 w-full text-sm sm:w-48" aria-label="Status" onChange={(e) => set({ status: e.target.value || undefined })}>
             <option value="">All statuses</option>
             {CONTENT_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
           </select>
         )}
         {Object.entries(config.filters || {}).map(([key, options]) => (
-          <select key={key} className="input w-48" aria-label={key} onChange={(e) => set({ [key]: e.target.value || undefined })}>
+          <select key={key} className="input h-9 w-full text-sm sm:w-44" aria-label={key} onChange={(e) => set({ [key]: e.target.value || undefined })}>
             <option value="">All {key}s</option>
             {options.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
@@ -106,9 +106,9 @@ function WorkflowPanel({ resource, doc, onChanged }) {
     onError: (e) => toast.error(errorMessage(e)),
   });
   return (
-    <div className="card space-y-4 p-5">
+    <div className="space-y-4 rounded-xl border border-line bg-white p-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-sans text-base font-semibold">Verification & publishing</h2>
+        <h2 className="text-sm font-semibold">Verification & publishing</h2>
         <StatusPill status={doc.status} />
       </div>
       {doc.verification?.verifiedAt ? (
@@ -116,7 +116,7 @@ function WorkflowPanel({ resource, doc, onChanged }) {
       ) : (
         <p className="text-sm text-muted">Not yet verified.</p>
       )}
-      <div className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+      <div className="grid gap-2">
         <select className="input" value={status} onChange={(e) => setStatus(e.target.value)} aria-label="New status">
           {CONTENT_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
         </select>
@@ -128,7 +128,7 @@ function WorkflowPanel({ resource, doc, onChanged }) {
         <Button size="sm" variant="ghost" onClick={() => change.mutate({ status: 'archived' })}><Archive className="size-4" aria-hidden />Archive</Button>
       </div>
       {doc.featured !== undefined && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-sand-200 pt-4">
+        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-4">
           <Button size="sm" variant={doc.featured ? 'primary' : 'secondary'} onClick={() => feature.mutate({ featured: !doc.featured })}><Star className="size-4" aria-hidden />{doc.featured ? 'Featured' : 'Feature'}</Button>
           <label className="flex items-center gap-2 text-sm">Editorial rank
             <input type="number" min={0} max={1000} className="input w-24" value={rank} onChange={(e) => setRank(Number(e.target.value))} />
@@ -175,8 +175,8 @@ export function ResourceEdit() {
   const title = isNew ? `New ${config.singular}` : doc[config.nameField || 'name'];
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
-      <div className="card p-6">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="rounded-xl border border-line bg-white p-6">
         <PageHeader
           title={title}
           subtitle={<Link to={`/admin/r/${resource}`} className="hover:underline">← {config.title}</Link>}
@@ -189,10 +189,10 @@ export function ResourceEdit() {
         )}
       </div>
       {!isNew && (
-        <div className="space-y-4">
+        <div className="space-y-4 xl:sticky xl:top-20 xl:self-start">
           {config.workflow && isAdmin && <WorkflowPanel resource={resource} doc={doc} onChanged={(d) => qc.setQueryData(['admin', resource, 'doc', id], d)} />}
-          {config.workflow && !isAdmin && <div className="card p-5 text-sm text-muted">Status: <StatusPill status={doc.status} />. An administrator must verify and publish this item.</div>}
-          <div className="card p-5 text-xs text-muted">
+          {config.workflow && !isAdmin && <div className="rounded-xl border border-line bg-white p-5 text-sm text-muted">Status: <StatusPill status={doc.status} />. An administrator must verify and publish this item.</div>}
+          <div className="rounded-xl border border-line bg-white p-5 text-xs text-muted">
             <p>Created {formatDate(doc.createdAt)} · Updated {formatDate(doc.updatedAt)}</p>
             {!config.noCreate && canWrite && (
               <Button size="sm" variant="danger" className="mt-3" onClick={() => window.confirm(config.workflow ? 'Archive this item?' : 'Delete permanently?') && remove.mutate()}>
