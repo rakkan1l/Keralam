@@ -1,0 +1,14 @@
+import mongoose from 'mongoose';
+import { env } from './env.js';
+
+mongoose.set('strictQuery', true);
+
+export async function connectDB(uri = env.mongoUri) {
+  await mongoose.connect(uri, { autoIndex: true, serverSelectionTimeoutMS: 10000 });
+  if (!env.isTest) console.log(`[db] connected to ${mongoose.connection.host}/${mongoose.connection.name}`);
+  return mongoose.connection;
+}
+
+export async function disconnectDB() {
+  await mongoose.disconnect();
+}

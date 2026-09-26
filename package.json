@@ -1,0 +1,25 @@
+{
+  "name": "kerala-travel-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kerala Travel & Local Discovery Platform — Kerala, Discovered Your Way.",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c green,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "seed": "npm run seed -w server",
+    "create-admin": "npm run create-admin -w server",
+    "test": "npm run test -w server && npm run test -w client",
+    "lint": "npm run lint -w client"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
