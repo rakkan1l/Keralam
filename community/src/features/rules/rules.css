@@ -1,0 +1,129 @@
+.rules-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.rules__layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) 3fr;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.rules-toc {
+  position: sticky;
+  top: calc(var(--header-h) + 2rem);
+}
+
+.rules-toc__label {
+  color: var(--accent);
+  padding-bottom: 1rem;
+  border-bottom: var(--hairline) solid var(--line-strong);
+}
+
+.rules-toc__link {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+  padding: 0.75rem 0;
+  border-bottom: var(--hairline) solid var(--line);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-muted);
+  transition:
+    color var(--dur-fast),
+    padding var(--dur-base) var(--ease-out);
+}
+
+.rules-toc__link .caps {
+  color: var(--fg-subtle);
+}
+
+.rules-toc__link:hover,
+.rules-toc__link.is-active {
+  color: var(--fg);
+  padding-left: 0.5rem;
+}
+
+.rules-toc__link.is-active .caps {
+  color: var(--accent);
+}
+
+.rules__content {
+  display: grid;
+  gap: var(--space-9);
+  min-width: 0;
+}
+
+.rule-category__head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  padding-bottom: 1.5rem;
+  border-bottom: var(--hairline) solid var(--line-strong);
+}
+
+.rule-category__num {
+  font-size: 3rem;
+  line-height: 1;
+  font-style: italic;
+  color: var(--accent);
+}
+
+.rule-category__title {
+  font-size: var(--text-2xl);
+  margin-bottom: 0.5rem;
+}
+
+.rule {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 1rem;
+  padding-block: 1.5rem;
+  border-bottom: var(--hairline) solid var(--line);
+}
+
+.rule__id {
+  color: var(--accent);
+  padding-top: 0.3rem;
+}
+
+.rule__title {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+}
+
+.rules__end {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: var(--space-6);
+  background: var(--paper-200);
+}
+
+.rules__end-title {
+  font-size: var(--text-xl);
+}
+
+@media (max-width: 900px) {
+  .rules__layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .rules-toc {
+    position: static;
+  }
+
+  .rule {
+    grid-template-columns: 2.75rem 1fr;
+  }
+}

@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Kerala Travel & Local Discovery Platform \u2014 Kerala, Discovered Your Way.",
+  "description": "Kerala Travel & Local Discovery Platform — Kerala, Discovered Your Way.",
   "workspaces": [
     "server",
-    "client"
+    "client",
+    "community"
   ],
   "scripts": {
     "dev": "concurrently -n server,client -c green,cyan \"npm run dev -w server\" \"npm run dev -w client\"",
@@ -15,7 +16,10 @@
     "seed": "npm run seed -w server",
     "create-admin": "npm run create-admin -w server",
     "test": "npm run test -w server && npm run test -w client",
-    "lint": "npm run lint -w client"
+    "lint": "npm run lint -w client",
+    "dev:community": "npm run dev -w community",
+    "build:community": "npm run build -w community",
+    "lint:community": "npm run lint -w community"
   },
   "engines": {
     "node": "22.x"

@@ -8,6 +8,7 @@ The app is built so that **nothing unverified is presented as verified**: every 
 
 - Architecture, data model, roadmap and design decisions → [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 - REST API reference → [`docs/API.md`](docs/API.md)
+- **Separate workspace:** the pre-launch FiveM roleplay community website lives in [`community/`](community/README.md) (`npm run dev:community`)
 
 ---
 

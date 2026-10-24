@@ -1,0 +1,138 @@
+.admin-directory__bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: var(--hairline) solid var(--line-strong);
+}
+
+.admin-directory__bar h2 {
+  color: var(--accent);
+}
+
+.admin-directory__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.admin-directory__meta > div {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-directory__meta dt {
+  color: var(--fg-subtle);
+}
+
+.admin-directory__meta dd {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.admin-directory__notice {
+  margin-top: 1.5rem;
+}
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--space-6) var(--space-5);
+  margin-top: var(--space-7);
+}
+
+.staff-card {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.staff-card__portrait {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--ink-900);
+  color: var(--gold-300);
+  font-size: 3rem;
+}
+
+.staff-card__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.staff-card__body {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.staff-card__name {
+  font-size: var(--text-xl);
+  line-height: 1.05;
+}
+
+.staff-card__role {
+  color: var(--accent);
+}
+
+.roster-empty {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-8);
+  align-items: center;
+  margin-top: var(--space-8);
+}
+
+.roster-empty__ghosts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.roster-empty__ghosts li {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.roster-empty__portrait {
+  aspect-ratio: 4 / 5;
+  border: var(--hairline) dashed var(--line-strong);
+  background:
+    linear-gradient(135deg, transparent 49.7%, var(--line) 50%, transparent 50.3%),
+    var(--paper-50);
+}
+
+.roster-empty__line {
+  height: 0.6rem;
+  width: 75%;
+  background: var(--paper-300);
+}
+
+.roster-empty__line--short {
+  width: 45%;
+  background: var(--paper-200);
+}
+
+.roster-empty__message {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.roster-empty__label {
+  color: var(--accent);
+}
+
+@media (max-width: 860px) {
+  .roster-empty {
+    grid-template-columns: 1fr;
+  }
+
+  .roster-empty__message {
+    order: -1;
+  }
+}
